@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Prototyp</title>
+  <style>
+    @font-face {
+      font-family: 'Idlekin';
+      src: url('../../assets/Font/ThaleahFat.ttf') format('truetype');
+      font-display: swap;
+    }
+    body {
+      margin: 0;
+      background: #1a1a20;
+      color: #ddd;
+      font: 16px/1.4 'Idlekin', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+    }
+    canvas {
+      background: #101014;
+      border: 1px solid #333;
+      /* Pixel-Art: harte Kanten statt Weichzeichner */
+      image-rendering: pixelated;
+    }
+    #hud { white-space: pre; color: #8a8; }
+  </style>
+</head>
+<body>
+  <canvas id="game" width="480" height="270"></canvas>
+  <div id="hud"></div>
+  <script src="main.js"></script>
+</body>
+</html>

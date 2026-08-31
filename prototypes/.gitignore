@@ -1,0 +1,7 @@
+# Prototypen dürfen eigene Dependencies haben - die gehören nicht ins Repo
+node_modules/
+dist/
+build/
+.venv/
+__pycache__/
+*.log

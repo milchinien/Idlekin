@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Idlekin</title>
+  <style>
+    @font-face {
+      font-family: 'Idlekin';
+      src: url('/assets/Font/ThaleahFat.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 40px 24px;
+      background: #15151b; color: #cfcfd6;
+      font: 18px/1.45 'Idlekin', system-ui, sans-serif;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .wrap { width: 100%; max-width: 760px; }
+    h1 { font-size: 28px; margin: 0 0 4px; color: #fff; letter-spacing: .03em; }
+    .sub { color: #858596; margin: 0 0 28px; font-size: 17px; }
+    .box {
+      background: #1c1c24; border: 1px solid #2e2e3a;
+      padding: 16px 18px; margin-bottom: 12px;
+    }
+    .box h2 { font-size: 18px; margin: 0 0 8px; color: #a8a8ba; letter-spacing: .04em; text-transform: uppercase; }
+    .box p { margin: 0 0 8px; }
+    a { color: #7fbf9f; }
+    code { background: #23232e; padding: 2px 6px; color: #a8a8ba; }
+    ol { margin: 0; padding-left: 20px; color: #8a8a9c; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Idlekin</h1>
+    <p class="sub">Fantasy-Idle-MMO &middot; Entwicklungsumgebung</p>
+
+    <div class="box">
+      <h2>Spiel</h2>
+      <p>Noch nicht implementiert. Diese Seite ist der spaetere Einstiegspunkt des Clients.</p>
+      <p>Der naechste Schritt ist <strong>Phase&nbsp;1</strong> aus
+        <code>docs/26-entwicklungsplan.md</code>: Projektstruktur, Server,
+        Datenbank und Client-Server-Kommunikation.</p>
+    </div>
+
+    <div class="box">
+      <h2>Prototypen</h2>
+      <p><a href="/prototypes/">&rarr; Zur Prototypen-Uebersicht</a></p>
+      <p>Wegwerf-Experimente, bewusst unabhaengig vom Spiel. Das Menue listet
+        automatisch alles auf, was in <code>prototypes/</code> liegt.</p>
+    </div>
+
+    <div class="box">
+      <h2>Dokumentation</h2>
+      <p>Die 26-teilige GDD-Reihe liegt in <code>docs/</code>. Reihenfolge und
+        Umfang der Umsetzung stehen in Dokument 26.</p>
+    </div>
+  </div>
+</body>
+</html>

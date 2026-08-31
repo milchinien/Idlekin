@@ -1,6 +1,6 @@
 # Game Design Documents
 
-Diese Dokumentation ist als 26-teilige GDD-Reihe organisiert.
+Diese Dokumentation ist als 26-teilige GDD-Reihe plus abgeleitetem Asset Style Guide organisiert.
 
 ## Dokumentplan
 
@@ -30,3 +30,4 @@ Diese Dokumentation ist als 26-teilige GDD-Reihe organisiert.
 24. [Technische Architektur](24-technische-architektur.md)
 25. [Datenstrukturen](25-datenstrukturen.md)
 26. [Konkreter Entwicklungsplan für Claude Code + Codex](26-entwicklungsplan.md)
+27. [Asset Style Guide](27-asset-style-guide.md)

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "sourceTileSize": { "width": 64, "height": 64 },
+  "worldTileSize": { "width": 32, "height": 32 },
+  "atlasSize": { "columns": 4, "rows": 2, "width": 256, "height": 128 },
+  "columns": ["left-cap", "middle-a", "middle-b", "right-cap"],
+  "rows": ["surface", "body-fill"],
+  "rendering": {
+    "filter": "nearest-neighbor",
+    "transparentOutsideCaps": true,
+    "surfaceCollisionY": 0
+  },
+  "biomes": {
+    "meadow-mountains": "meadow-mountains/tiles/platform-tileset.png",
+    "meadow-forest": "meadow-forest/tiles/platform-tileset.png",
+    "red-brown-cave": "red-brown-cave/tiles/platform-tileset.png",
+    "jungle": "jungle/tiles/platform-tileset.png"
+  }
+}

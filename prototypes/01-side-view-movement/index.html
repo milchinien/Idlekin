@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Prototyp 01 - Side View Bewegung</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <!-- Mindestens 960x540 Backbuffer bei weiterhin 480x270 logischen
+         Spielkoordinaten; auf HiDPI wird zusaetzlich die Pixeldichte genutzt. -->
+    <canvas id="game" width="960" height="540"></canvas>
+    <div id="hud"></div>
+    <div id="help">
+      <b>A / D</b> laufen &nbsp; <b>Leertaste / W</b> springen (halten = hoeher)
+      &nbsp; <b>S</b> durch Plattform fallen &nbsp; <b>B</b> Hintergrund wechseln
+      &nbsp; <b>E</b> Portal benutzen &nbsp; <b>J</b> Nahkampf
+      &nbsp; <b>R</b> Reset &nbsp; <b>F1</b> Hitboxen
+    </div>
+  </div>
+  <aside id="panel">
+    <h1>Tuning</h1>
+    <div class="group-title first">Hintergrund</div>
+    <div id="backgrounds"></div>
+    <div id="presets"></div>
+    <div id="sliders"></div>
+    <div id="actions">
+      <button id="btn-export">Werte als JSON kopieren</button>
+      <button id="btn-reset">Zuruecksetzen</button>
+    </div>
+    <p class="hint">Werte werden im Browser gespeichert und ueberleben ein Reload.</p>
+  </aside>
+  <script src="tuning.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

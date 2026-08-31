@@ -1,0 +1,108 @@
+@font-face {
+  font-family: 'Idlekin';
+  src: url('../../assets/Font/ThaleahFat.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #15151b;
+  color: #cfcfd6;
+  font: 16px/1.35 'Idlekin', system-ui, sans-serif;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+#stage { display: flex; flex-direction: column; gap: 10px; }
+
+canvas {
+  /* Exakt 1:1 zum 960x540-Backbuffer. content-box verhindert, dass der
+     Rahmen die Zeichenflaeche auf 958x538 quetscht und Schrift verwischt. */
+  box-sizing: content-box;
+  image-rendering: pixelated;
+  width: 960px;
+  height: 540px;
+  background: #0d0d12;
+  border: 1px solid #2e2e3a;
+}
+
+#hud {
+  white-space: pre;
+  color: #7fbf9f;
+  font-size: 15px;
+  line-height: 1.2;
+  min-height: 96px;
+}
+
+#help { color: #858596; font-size: 15px; }
+#help b { color: #9a9ab0; }
+
+#panel {
+  width: 300px;
+  background: #1c1c24;
+  border: 1px solid #2e2e3a;
+  padding: 14px;
+  max-height: 640px;
+  overflow-y: auto;
+}
+
+#panel h1 { font-size: 18px; margin: 0 0 10px; color: #fff; }
+
+.group-title {
+  color: #7d7d92;
+  font-size: 14px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin: 14px 0 6px;
+  border-bottom: 1px solid #2e2e3a;
+  padding-bottom: 4px;
+}
+
+.group-title.first { margin-top: 0; }
+
+.row { margin-bottom: 8px; }
+
+.row label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #a8a8ba;
+  margin-bottom: 2px;
+}
+
+.row .val { color: #7fbf9f; }
+
+.row input[type=range] {
+  width: 100%;
+  accent-color: #4a9d7a;
+  height: 16px;
+}
+
+.row input[type=checkbox] {
+  width: auto;
+  accent-color: #4a9d7a;
+  margin: 0;
+}
+
+#presets, #backgrounds { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+
+button {
+  background: #2a2a36;
+  color: #cfcfd6;
+  border: 1px solid #3d3d4c;
+  padding: 5px 9px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:hover { background: #343444; }
+button.active { background: #2f5f4a; border-color: #4a9d7a; color: #d8f0e4; }
+
+#actions { display: flex; gap: 6px; margin-top: 14px; }
+.hint { color: #858596; font-size: 14px; margin: 8px 0 0; }

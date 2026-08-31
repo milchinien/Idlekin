@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.vite/
+*.local
+.DS_Store
+
+# Gekaufte/heruntergeladene Fremd-Assets. Die Lizenzen dieser Packs erlauben
+# ausdruecklich KEINE Weiterverbreitung ("redistributing the assets"), und
+# dieses Repo ist oeffentlich. Der Ordner bleibt deshalb rein lokal.
+# Die daraus abgeleiteten eigenen Assets unter assets/player, assets/world,
+# assets/portals und assets/props sind davon nicht betroffen.
+assets/referenz (MUSS)/
+
+# Unveraenderte Kopie der lizenzierten Vorlage (byte-identisch mit
+# "referenz (MUSS)/for all player chas/male_hero_template.png").
+# Kein Code verweist darauf; der abgeleitete Atlas "toUse.png" bleibt im Repo.
+assets/player/Final Player/male_hero_template.png
