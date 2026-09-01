@@ -23,7 +23,14 @@ const MAP_W = 1680;
 const GROUND_Y = 230;
 const TILE_SIZE = 32;
 const TILE_SOURCE_SIZE = 64;
+// Das Atlas ist doppelt so fein aufgeloest wie die Welt: 64 Quellpixel = 32 Weltpixel.
+const SRC_PER_WORLD = TILE_SOURCE_SIZE / TILE_SIZE;
+// Die Fuellkachel hat oben eine helle Abschlusskante. Die wird uebersprungen,
+// sonst zieht sich mitten durch den Boden eine zweite Lichtlinie.
 const BODY_SOURCE_INSET = 8;
+// Dadurch bleiben nur 56 Quellpixel nutzbar - die Fuellung wiederholt sich
+// also alle 28 statt alle 32 Weltpixel. Der Massstab bleibt so bei 1:2.
+const BODY_WORLD_STEP = (TILE_SOURCE_SIZE - BODY_SOURCE_INSET) / SRC_PER_WORLD;
 const RULER_X = 205;
 
 // --- Kartenhintergruende ---------------------------------------------------
@@ -642,36 +649,49 @@ function drawPlatformRect(platform, fallbackColor) {
     return;
   }
 
-  const useCaps = platform.w >= TILE_SIZE * 2;
-  let tileIndex = 0;
-  for (let offsetX = 0; offsetX < platform.w; offsetX += TILE_SIZE) {
-    const drawWidth = Math.min(TILE_SIZE, platform.w - offsetX);
-    const isFirst = offsetX === 0;
-    const isLast = offsetX + drawWidth >= platform.w;
-    let column = 1 + (tileIndex % 2);
-    if (useCaps && isFirst) column = 0;
-    else if (useCaps && isLast) column = 3;
+  const w = platform.w;
+  const h = platform.h;
 
-    // Beim schmalen rechten Reststueck wird die rechte Kante des Cap-Tiles benutzt.
-    const sourceWidth = drawWidth / TILE_SIZE * TILE_SOURCE_SIZE;
-    const sourceX = column * TILE_SOURCE_SIZE + (column === 3 ? TILE_SOURCE_SIZE - sourceWidth : 0);
-    const topHeight = Math.min(TILE_SIZE, platform.h);
-    const sourceTopHeight = topHeight / TILE_SIZE * TILE_SOURCE_SIZE;
+  // Zeichnet eine senkrechte Saeule der Breite dw: oben die Oberflaechenzeile,
+  // darunter so viele Fuellzeilen wie noetig. Quelle und Ziel stehen dabei
+  // immer im Verhaeltnis SRC_PER_WORLD - Oberflaeche und Fuellung werden also
+  // gleich skaliert und passen nahtlos aneinander.
+  const column = (offsetX, drawWidth, col) => {
+    const sourceX = col * TILE_SOURCE_SIZE;
+    const sourceWidth = drawWidth * SRC_PER_WORLD;
+
+    const topHeight = Math.min(TILE_SIZE, h);
     ctx.drawImage(
       atlas,
-      sourceX, 0, sourceWidth, sourceTopHeight,
+      sourceX, 0, sourceWidth, topHeight * SRC_PER_WORLD,
       x + offsetX, y, drawWidth, topHeight,
     );
 
-    for (let offsetY = TILE_SIZE; offsetY < platform.h; offsetY += TILE_SIZE) {
-      const drawHeight = Math.min(TILE_SIZE, platform.h - offsetY);
-      const sourceHeight = drawHeight / TILE_SIZE * (TILE_SOURCE_SIZE - BODY_SOURCE_INSET);
+    for (let offsetY = TILE_SIZE; offsetY < h; offsetY += BODY_WORLD_STEP) {
+      const drawHeight = Math.min(BODY_WORLD_STEP, h - offsetY);
       ctx.drawImage(
         atlas,
-        sourceX, TILE_SOURCE_SIZE + BODY_SOURCE_INSET, sourceWidth, sourceHeight,
+        sourceX, TILE_SOURCE_SIZE + BODY_SOURCE_INSET, sourceWidth, drawHeight * SRC_PER_WORLD,
         x + offsetX, y + offsetY, drawWidth, drawHeight,
       );
     }
+  };
+
+  // Kappen nur, wenn zwei nebeneinander passen. Schmalere Plattformen bekommen
+  // durchgehende Mittelkacheln - eine auf 8 px gequetschte Kappe waere fast
+  // vollstaendig transparent, weil ihr Fels weit innen liegt.
+  const capW = w >= TILE_SIZE * 2 ? TILE_SIZE : 0;
+  if (capW) {
+    column(0, capW, 0);          // linke Kappe, buendig an der linken Kante
+    column(w - capW, capW, 3);   // rechte Kappe, buendig an der RECHTEN Kante
+  }
+
+  // Mitte zwischen den Kappen fuellen. Ein angebrochenes Reststueck nimmt den
+  // linken Teil einer Mittelkachel - die sind wiederholbar, das faellt nicht auf.
+  let tileIndex = 0;
+  for (let offsetX = capW; offsetX < w - capW; offsetX += TILE_SIZE) {
+    const drawWidth = Math.min(TILE_SIZE, w - capW - offsetX);
+    column(offsetX, drawWidth, 1 + (tileIndex % 2));
     tileIndex++;
   }
 }

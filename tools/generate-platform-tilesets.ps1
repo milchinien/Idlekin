@@ -22,12 +22,74 @@ function Test-GeneratedBackground([System.Drawing.Color]$Color) {
     return ($lowSaturation -and $min -ge 214) -or $min -ge 246
 }
 
+function Get-FirstContentBand([System.Drawing.Bitmap]$Source, [int]$Left, [int]$Right) {
+    # Sucht das Band der eigentlichen Blockreihe.
+    #
+    # Die feste Teilung in zwei gleich hohe Haelften reicht nicht: in manchen
+    # Mastern ist die obere Blockreihe niedriger und die untere beginnt bereits
+    # oberhalb der Bildmitte. Deren Oberkante landete dadurch mit in der
+    # Oberflaechenkachel - sichtbar als zweite Lichtlinie mitten im Boden.
+    #
+    # Es genuegt aber nicht, das erste Band zu nehmen: im Dschungel-Master
+    # ragen Blattwedel frei ueber die Bloecke hinaus und bilden ein eigenes,
+    # kleines Band weiter oben. Deshalb wird das erste Band genommen, das
+    # ueberhaupt Blockhoehe hat.
+    $minPixels = 6
+    $minBandHeight = [Math]::Floor($Source.Height * 0.15)
+
+    $rows = New-Object 'bool[]' $Source.Height
+    for ($y = 0; $y -lt $Source.Height; $y++) {
+        $count = 0
+        for ($x = $Left; $x -lt $Right; $x += 2) {
+            $c = $Source.GetPixel($x, $y)
+            if ($c.A -eq 0 -or (Test-GeneratedBackground $c)) { continue }
+            $count++
+            if ($count -ge $minPixels) { break }
+        }
+        $rows[$y] = ($count -ge $minPixels)
+    }
+
+    # Zwei parallele Listen statt eines Arrays von Arrays - PowerShell macht
+    # beim Anhaengen verschachtelter Arrays sonst Probleme.
+    $bandStart = New-Object System.Collections.ArrayList
+    $bandEnd = New-Object System.Collections.ArrayList
+    $open = -1
+    for ($y = 0; $y -lt $Source.Height; $y++) {
+        if ($rows[$y]) {
+            if ($open -lt 0) { $open = $y }
+        } elseif ($open -ge 0) {
+            [void]$bandStart.Add($open)
+            [void]$bandEnd.Add($y - 1)
+            $open = -1
+        }
+    }
+    if ($open -ge 0) {
+        [void]$bandStart.Add($open)
+        [void]$bandEnd.Add($Source.Height - 1)
+    }
+    if ($bandStart.Count -eq 0) { throw 'Kein Inhalt in der Spalte gefunden' }
+
+    for ($i = 0; $i -lt $bandStart.Count; $i++) {
+        if (($bandEnd[$i] - $bandStart[$i] + 1) -ge $minBandHeight) {
+            return @($bandStart[$i], $bandEnd[$i])
+        }
+    }
+    # Fallback: das hoechste Band
+    $best = 0
+    for ($i = 1; $i -lt $bandStart.Count; $i++) {
+        if (($bandEnd[$i] - $bandStart[$i]) -gt ($bandEnd[$best] - $bandStart[$best])) { $best = $i }
+    }
+    return @($bandStart[$best], $bandEnd[$best])
+}
+
 function Get-CellCrop([System.Drawing.Bitmap]$Source, [int]$Column, [int]$Row) {
-    $scanRow = if ($Row -eq 1) { 0 } else { $Row }
+    # Beide Atlas-Zeilen werden aus dem oberen Master-Band geschnitten:
+    # die Oberflaeche direkt, die Fuellung aus dessen Innerem.
     $regionX = [Math]::Floor($Column * $Source.Width / $Columns)
     $regionRight = [Math]::Floor(($Column + 1) * $Source.Width / $Columns)
-    $regionY = [Math]::Floor($scanRow * $Source.Height / $Rows)
-    $regionBottom = [Math]::Floor(($scanRow + 1) * $Source.Height / $Rows)
+    $band = Get-FirstContentBand $Source $regionX $regionRight
+    $regionY = $band[0]
+    $regionBottom = $band[1] + 1
     $minX = $regionRight
     $minY = $regionBottom
     $maxX = -1
@@ -81,7 +143,10 @@ function Copy-CropNearest(
         for ($x = 0; $x -lt $TileSize; $x++) {
             $sourceX = $Crop.X + [Math]::Min($Crop.Width - 1, [Math]::Floor(($x + 0.5) * $Crop.Width / $TileSize))
             $color = $Source.GetPixel($sourceX, $sourceY)
-            if (-not (Test-GeneratedBackground $color)) {
+            # Transparente Quellpixel muessen transparent bleiben. Ohne die
+            # Alpha-Pruefung werden sie als deckendes Schwarz uebernommen -
+            # sichtbar als schwarzer Streifen ueber der Grasnarbe.
+            if ($color.A -ne 0 -and -not (Test-GeneratedBackground $color)) {
                 $Target.SetPixel($targetX + $x, $targetY + $y, [System.Drawing.Color]::FromArgb(255, $color.R, $color.G, $color.B))
             }
         }

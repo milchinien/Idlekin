@@ -15,3 +15,6 @@ assets/referenz (MUSS)/
 # "referenz (MUSS)/for all player chas/male_hero_template.png").
 # Kein Code verweist darauf; der abgeleitete Atlas "toUse.png" bleibt im Repo.
 assets/player/Final Player/male_hero_template.png
+
+# Zwischenbilder der Debug-Werkzeuge unter tools/
+tools/_*.png

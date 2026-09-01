@@ -124,6 +124,52 @@ eine sichtbare Naht — unabhängig davon, ob das Bild nahtlos gebaut ist. Kein
 Hochskalieren, kein Beschnitt, keine Verzerrung. Der Regler *Hintergrund-
 Parallaxe* geht von 0 (steht still wie vorher) bis 1 (scrollt mit der Welt).
 
+### Zu den Plattformen
+Die Kacheln kommen aus einem 4x2-Atlas (256x128): Spalten sind linke Kappe,
+zwei Mittelkacheln und rechte Kappe, Zeilen sind Oberflaeche und Fuellung.
+64 Quellpixel entsprechen 32 Weltpixeln.
+
+Drei Fehler behoben:
+
+1. **Rechte Kappe war angeschnitten.** Der Code lief in festen 32-px-Schritten
+   und machte den *letzten Schritt* zur Kappe. Bei Breiten, die keine
+   Vielfachen von 32 sind, blieb dafuer nur ein Rest von 8-20 px, und daraus
+   wurde nur der aeussere Teil des Kappen-Tiles genommen - bei vier von fuenf
+   Bodensegmenten also 25-62 % der Kappe. Jetzt sitzen beide Kappen buendig an
+   den echten Kanten, die Mittelkacheln fuellen nur dazwischen.
+
+2. **Fuellzeile hatte einen anderen Massstab** als die Oberflaeche (0,571 statt
+   0,500), wodurch die Erde dort 14 % groesser war. Der noetige Versatz von
+   8 Quellpixeln - er ueberspringt die helle Abschlusskante der Fuellkachel -
+   bleibt erhalten, verkuerzt aber jetzt die Wiederholung auf 28 statt 32
+   Weltpixel, statt den Massstab zu verbiegen.
+
+3. **Zuschnitt aus dem Master** (`tools/generate-platform-tilesets.ps1`): Die
+   feste Teilung in zwei gleich hohe Haelften passte nicht zu allen Mastern.
+   In der Hoehle beginnt die untere Blockreihe oberhalb der Bildmitte, deren
+   Oberkante landete mit in der Oberflaechenkachel - sichtbar als zweite
+   Lichtlinie mitten im Boden. Jetzt werden die Inhaltsbaender erkannt.
+   Dabei genuegt nicht das erste Band: im Dschungel ragen Blattwedel frei
+   ueber die Bloecke und bilden ein eigenes kleines Band weiter oben.
+   Genommen wird das erste Band mit Blockhoehe. Ausserdem wurden transparente
+   Quellpixel als deckendes Schwarz uebernommen - daher der schwarze Streifen
+   ueber der Grasnarbe im Dschungel.
+
+### Zur Farbe der Plattformen
+Die Master-Konzepte liefern ein nahezu texturloses Fast-Schwarz (~#2b2822).
+Vor den hellen, gemalten Hintergruenden liest sich das als ausgeschnittene
+Silhouette statt als Boden. `tools/grade-platform-tilesets.ps1` hebt deshalb
+die Schatten an, waermt die Erde und legt eine feine Koernung darueber; das
+Gras bleibt unangetastet. Die Hoehle wird nur zu 62 % aufgehellt, sonst
+verliert sie ihren Charakter.
+
+Das Skript geht immer von einer ungefaerbten Sicherung unter `tiles/raw/` aus
+und ist dadurch wiederholt ausfuehrbar. Nach einem erneuten Lauf von
+`generate-platform-tilesets.ps1` muss `raw/` geloescht werden.
+
+Ein Lichtabfall unter der Grasnarbe ist eingebaut, aber standardmaessig aus:
+auf der sehr ebenen Erdflaeche erzeugt er sichtbare Streifen statt Tiefe.
+
 ### Zum Thema Teilschritte
 Die Bewegung läuft in Schritten von maximal 4 px, damit dünne Plattformen bei
 hohem Tempo nicht übersprungen werden. Nachgemessen: Tunneling durch die 6 px
