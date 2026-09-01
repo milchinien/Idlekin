@@ -191,7 +191,7 @@ nur für Menschen mit Compiler.
 | `vite.config.js` | wandert nach `packages/client/vite.config.ts`; das Prototypen-Menü-Plugin bleibt in einer eigenen Vite-Konfiguration im Wurzelverzeichnis erhalten |
 | `index.html` (Wurzel) | wird in M1 durch den echten Client-Einstiegspunkt ersetzt |
 | `tools/*.ps1` | bleiben Werkzeuge; `generate-platform-tilesets.ps1` wird in M12 in die Asset-Pipeline eingebunden |
-| `tools/_debug-*.png` | Debug-Ausgaben, gehören in `.gitignore` |
+| `tools/_*.png` | Debug- und Zwischenausgaben (`_debug-*`, `_scene-*`, `_final-*`), gehören in `.gitignore` |
 | `assets/` | bleibt Quellordner; gebaute Atlanten landen in `packages/client/public/` |
 
 ---
@@ -217,7 +217,7 @@ die sich bauen und testen lassen.
 - `package.json` (Wurzel: nur Skripte und geteilte Werkzeuge)
 - `packages/{shared,server,client}/package.json` und `tsconfig.json`
 - `tsconfig.base.json`
-- `.gitignore` (ergänzt um `tools/_debug-*.png`, `*.sqlite`, `dist/`)
+- `.gitignore` (ergänzt um `tools/_*.png`, `*.sqlite`, `dist/`)
 
 **Details:** Wurzelskripte:
 `dev` (Client und Server parallel), `dev:proto` (bestehendes Prototypen-Menü),

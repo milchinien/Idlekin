@@ -68,7 +68,8 @@ Wenn Zeit knapp wird, sind das die letzten, die gestrichen werden:
 
 1. **Zeitraum-Äquivalenz** (M5/S-5.4)
    Eine Abrechnung über 10 Stunden ergibt dasselbe wie 1200 Abrechnungen über 30
-   Sekunden. Sichert `remainderMs` und damit den gesamten Idle-Fortschritt.
+   Sekunden. Sichert das korrekte Vorrücken von `lastYieldAt` und damit den gesamten
+   Idle-Fortschritt.
 
 2. **Betriebsart-Äquivalenz im Kampf** (M6/S-6.5)
    Beobachtet, unbeobachtet und offline ergeben über eine Stunde denselben Ertrag ±10 %.

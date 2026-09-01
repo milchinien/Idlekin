@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototyp 03 – Weltenbauer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/prototypes/" title="Zur Prototypen-Auswahl"><h1>Weltenbauer</h1><span>Prototyp 03</span></a>
+    <div class="world-name"><label for="world-name">Welt</label><input id="world-name" maxlength="60" value="Meine Welt"></div>
+    <div class="top-actions">
+      <button id="play-world" class="play-button">▶ Spielen</button>
+      <button id="undo" title="Rückgängig (Strg+Z)" disabled>↶ Rückgängig</button>
+      <button id="save-world" class="primary">Speichern</button>
+      <button id="load-world">Gespeicherte Welt laden</button>
+      <button id="export-world">JSON exportieren</button>
+      <button id="import-world">JSON importieren</button>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="library">
+      <div class="aside-heading">
+        <div><span class="eyebrow">Aus Prototyp 02</span><h2>Kartenabschnitte</h2></div>
+        <button id="refresh-library" class="icon-button" title="Bibliothek aktualisieren">↻</button>
+      </div>
+      <p class="aside-help">Füge gespeicherte Karten zur Welt hinzu. Ein Abschnitt kann mehrfach vorkommen.</p>
+      <div id="map-library" class="map-library"></div>
+      <a class="editor-link" href="../02-tilemap-editor/">+ Neue Karte in Prototyp 02 bauen</a>
+    </aside>
+
+    <section class="editor">
+      <div class="stage-toolbar">
+        <div class="tool-group" aria-label="Werkzeuge">
+          <button class="tool active" data-tool="select" title="Auswählen und präzise verschieben (V)"><b>V</b> Auswählen</button>
+          <button class="tool" data-tool="portal" title="Portal-Asset platzieren (P)"><b>P</b> Portal bauen</button>
+          <button class="tool" data-tool="spawn" title="Spawn für neue Charaktere setzen (S)"><b>S</b> Spawn setzen</button>
+          <button class="tool" data-tool="pan" title="Weltansicht verschieben (H oder Leertaste)"><b>H</b> Hand</button>
+        </div>
+        <label>Zoom <select id="zoom"><option value="0.2">20 %</option><option value="0.35" selected>35 %</option><option value="0.5">50 %</option><option value="0.75">75 %</option><option value="1">100 %</option></select></label>
+        <label><input id="show-links" type="checkbox" checked> Portalwege</label>
+        <label><input id="snap-grid" type="checkbox" checked> Fang</label>
+        <select id="snap-size" title="Platzierungsraster">
+          <option value="1">1 px</option><option value="8" selected>8 px</option><option value="16">16 px</option><option value="32">32 px</option>
+        </select>
+        <button id="center-world">Alles zeigen</button>
+      </div>
+      <div id="viewport" class="viewport">
+        <div id="world" class="world">
+          <svg id="portal-links" class="portal-links" width="8000" height="4800" aria-hidden="true"></svg>
+          <div id="empty-world" class="empty-world"><strong>Noch ist diese Welt leer.</strong><span>Füge links einen Kartenabschnitt hinzu.</span></div>
+        </div>
+      </div>
+      <footer class="statusbar"><span id="status-tool">Auswählen</span><span id="status-count">0 Abschnitte · 0 Portale</span><span id="save-state">Nicht gespeichert</span></footer>
+    </section>
+
+    <aside class="inspector">
+      <div class="aside-heading"><div><span class="eyebrow">Eigenschaften</span><h2>Auswahl</h2></div></div>
+      <div id="nothing-selected" class="nothing-selected">Wähle einen Kartenabschnitt oder ein Portal in der Welt.</div>
+      <section id="section-inspector" class="selection-panel" hidden>
+        <span class="type-badge">Kartenabschnitt</span>
+        <label>Name<input id="section-name" maxlength="60"></label>
+        <div class="coordinate-grid"><label>Welt X<input id="section-x" type="number" step="1"></label><label>Welt Y<input id="section-y" type="number" step="1"></label></div>
+        <div id="section-meta" class="selection-meta"></div>
+        <button id="update-section">Aus Prototyp 02 aktualisieren</button>
+        <button id="remove-section" class="danger">Abschnitt entfernen</button>
+      </section>
+      <section id="portal-inspector" class="selection-panel" hidden>
+        <span class="type-badge portal-badge">Portal</span>
+        <label>Name<input id="portal-name" maxlength="60"></label>
+        <div class="coordinate-grid"><label>Position X<input id="portal-x" type="number" min="0" step="1"></label><label>Position Y<input id="portal-y" type="number" min="0" step="1"></label></div>
+        <label>Zielabschnitt<select id="portal-target"></select></label>
+        <div class="coordinate-grid"><label>Ziel X<input id="target-x" type="number" min="0" step="1"></label><label>Ziel Y<input id="target-y" type="number" min="0" step="1"></label></div>
+        <p class="portal-hint">Die Zielkoordinaten liegen innerhalb des gewählten Kartenabschnitts.</p>
+        <button id="jump-target">Zielabschnitt anzeigen</button>
+        <button id="remove-portal" class="danger">Portal entfernen</button>
+      </section>
+      <section id="spawn-inspector" class="selection-panel" hidden>
+        <span class="type-badge spawn-badge">Spieler-Spawn</span>
+        <label>Kartenabschnitt<select id="spawn-section"></select></label>
+        <div class="coordinate-grid"><label>Position X<input id="spawn-x" type="number" min="0" step="1"></label><label>Position Y<input id="spawn-y" type="number" min="0" step="1"></label></div>
+        <p class="portal-hint">Hier startet jeder neu erstellte Charakter.</p>
+        <button id="jump-spawn">Spawn anzeigen</button>
+        <button id="remove-spawn" class="danger">Spawn entfernen</button>
+      </section>
+      <section class="legend">
+        <h3>So geht’s</h3>
+        <ol><li>Karten links hinzufügen.</li><li>Abschnitte per Drag zusammensetzen.</li><li><b>P</b> drücken und ein Portal platzieren.</li><li><b>S</b> drücken und den Charakter-Spawn setzen.</li><li>Positionen per Drag oder pixelgenau rechts ändern.</li></ol>
+      </section>
+    </aside>
+  </main>
+
+  <dialog id="load-dialog">
+    <div class="dialog-heading"><div><span class="eyebrow">Lokaler Speicher</span><h2>Gespeicherte Welt</h2></div><button id="close-dialog" class="icon-button">×</button></div>
+    <div id="saved-world" class="saved-world"></div>
+  </dialog>
+  <div id="toast" role="status"></div>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Prototyp 05 – Monster & Bosse</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/prototypes/"><h1>Monster & Bosse</h1><span>Prototyp 05</span></a>
+    <div class="world-source"><small>Geladene Welt</small><strong id="world-name">Keine Welt geladen</strong></div>
+    <div class="top-actions">
+      <a class="button-link" href="../04-npc-quest-editor/">← NPCs & Quests</a>
+      <button id="load-world">Welt laden</button>
+      <button id="load-project">Projekt laden</button>
+      <button id="save-project" class="primary">Projekt speichern</button>
+      <button id="export-project">JSON exportieren</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="aside-heading"><div><span class="eyebrow">Bestiarium</span><h2>Gegner</h2></div><button id="add-enemy" class="icon-button">+</button></div>
+      <p class="aside-help">Wähle einen Gegner, dann <b>M</b> und klicke in einen Kartenabschnitt.</p>
+      <div id="enemy-list" class="enemy-list"></div>
+      <div class="prototype-chain">
+        <strong>Zusammenhängender Workflow</strong>
+        <a href="../02-tilemap-editor/"><b>02</b><span>Maps zeichnen</span></a>
+        <a href="../03-world-builder/"><b>03</b><span>Welt verbinden</span></a>
+        <a href="../04-npc-quest-editor/"><b>04</b><span>NPCs & Quests</span></a>
+        <span class="current"><b>05</b><span>Monster & Bosse</span></span>
+      </div>
+    </aside>
+
+    <section class="editor">
+      <div class="stage-toolbar">
+        <div class="tool-group">
+          <button class="tool active" data-tool="select"><b>V</b> Auswahl</button>
+          <button class="tool" data-tool="monster"><b>M</b> Platzieren</button>
+          <button class="tool" data-tool="zone"><b>Z</b> Zone</button>
+          <button class="tool" data-tool="erase"><b>E</b> Löschen</button>
+          <button class="tool" data-tool="pan"><b>H</b> Hand</button>
+        </div>
+        <label>Zoom <select id="zoom"><option value=".25">25 %</option><option value=".4" selected>40 %</option><option value=".5">50 %</option><option value=".75">75 %</option><option value="1">100 %</option></select></label>
+        <label><input id="show-portals" type="checkbox" checked> Portale</label>
+        <label><input id="show-npcs" type="checkbox" checked> NPCs</label>
+        <button id="center-world">Welt zentrieren</button>
+      </div>
+      <div id="placement-banner" class="placement-banner" hidden><b>Monster platzieren:</b><span id="placement-text"></span><button id="cancel-placement" class="small">Abbrechen</button></div>
+      <div id="viewport" class="viewport">
+        <div id="world" class="world">
+          <div id="empty-world" class="empty-world"><strong>Noch keine Welt geladen</strong><span>Lade die gespeicherte Welt aus Prototyp 03/04 oder eine Map aus Prototyp 02.</span><button id="empty-load" class="primary">Welt laden</button></div>
+        </div>
+      </div>
+      <footer class="statusbar"><span id="status-tool">Auswahl</span><span id="status-count">0 Gegner · 0 Zonen</span><span id="status-source">Quelle: –</span><span id="save-state">Nicht gespeichert</span></footer>
+    </section>
+
+    <aside class="inspector">
+      <div class="inspector-head"><div><span class="eyebrow">Monster-System</span><h2 id="inspector-title">Nichts ausgewählt</h2></div></div>
+      <div class="tabs">
+        <button class="tab active" data-tab="spawn">Spawner</button>
+        <button class="tab" data-tab="enemy">Gegner</button>
+        <button class="tab" data-tab="animation">Animation</button>
+      </div>
+      <section id="tab-spawn" class="tab-panel"></section>
+      <section id="tab-enemy" class="tab-panel" hidden></section>
+      <section id="tab-animation" class="tab-panel" hidden></section>
+    </aside>
+  </main>
+
+  <dialog id="world-dialog">
+    <div class="dialog-heading"><div><span class="eyebrow">Daten aus Prototyp 02–04</span><h2>Welt auswählen</h2></div><button class="icon-button close-dialog">×</button></div>
+    <p class="dialog-help">Die Quelle wird übernommen; bestehende Gegnerdaten bleiben erhalten.</p>
+    <div id="world-sources" class="source-list"></div>
+  </dialog>
+
+  <dialog id="animation-dialog" class="animation-dialog">
+    <div class="dialog-heading"><div><span class="eyebrow" id="animation-kicker">Frame 1</span><h2 id="animation-title">Idle 1</h2></div><button class="icon-button close-animation">×</button></div>
+    <div class="animation-layout">
+      <aside id="sequence-list" class="sequence-list"></aside>
+      <div class="frame-editor">
+        <p id="frame-help">Zeichne dieses Bild einzeln. Die graue Form ist eine Bewegungsidee.</p>
+        <div class="frame-toolbar"><button class="paint-tool active" data-paint="draw">Stift</button><button class="paint-tool" data-paint="erase">Radierer</button><label>Farbe <input id="paint-color" type="color" value="#88b95a"></label><label><input id="show-ghost" type="checkbox" checked> Vorschlag</label></div>
+        <canvas id="pixel-canvas" width="512" height="512"></canvas>
+        <div class="animation-actions"><button id="previous-frame">← Zurück</button><button id="skip-frame">Überspringen</button><button id="complete-frame" class="primary">Bild fertigstellen & weiter →</button></div>
+      </div>
+      <aside class="ghost-help"><strong>Bewegungsvorschlag</strong><div id="ghost-preview" class="ghost-preview"></div><ul id="ghost-notes"><li>Silhouette leicht absenken</li><li>Gewicht nach vorn verlagern</li><li>Hintere Kante stabil halten</li></ul><small>Nur eine Orientierung – das Design bleibt frei.</small></aside>
+    </div>
+  </dialog>
+
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <div id="toast" role="status"></div>
+  <script src="main.js"></script>
+</body>
+</html>

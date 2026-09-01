@@ -1,36 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Prototyp 01 - Side View Bewegung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototyp 01 – Spieltest</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="stage">
-    <!-- Mindestens 960x540 Backbuffer bei weiterhin 480x270 logischen
-         Spielkoordinaten; auf HiDPI wird zusaetzlich die Pixeldichte genutzt. -->
-    <canvas id="game" width="960" height="540"></canvas>
-    <div id="hud"></div>
-    <div id="help">
-      <b>A / D</b> laufen &nbsp; <b>Leertaste / W</b> springen (halten = hoeher)
-      &nbsp; <b>S</b> durch Plattform fallen &nbsp; <b>B</b> Hintergrund wechseln
-      &nbsp; <b>E</b> Portal benutzen &nbsp; <b>J</b> Nahkampf
-      &nbsp; <b>R</b> Reset &nbsp; <b>F1</b> Hitboxen
-    </div>
-  </div>
-  <aside id="panel">
-    <h1>Tuning</h1>
-    <div class="group-title first">Hintergrund</div>
-    <div id="backgrounds"></div>
-    <div id="presets"></div>
-    <div id="sliders"></div>
-    <div id="actions">
-      <button id="btn-export">Werte als JSON kopieren</button>
-      <button id="btn-reset">Zuruecksetzen</button>
-    </div>
-    <p class="hint">Werte werden im Browser gespeichert und ueberleben ein Reload.</p>
-  </aside>
-  <script src="tuning.js"></script>
+  <header class="topbar">
+    <a class="brand" href="/prototypes/"><h1>Idlekin Spieltest</h1><span>Prototyp 01</span></a>
+    <div class="source"><span>Getestet wird</span><strong id="source-name">Aktueller Prototyp</strong></div>
+    <div class="top-actions"><a id="back-to-editor" class="button" href="/prototypes/">Zurück zum Editor</a><button id="restart">Test neu starten</button></div>
+  </header>
+  <main class="play-layout">
+    <section class="game-shell">
+      <div class="world-head"><div><span id="section-name">Kartenabschnitt</span><small id="world-name">Testwelt</small></div><div class="controls"><b>A/D</b> Laufen <b>W/Leertaste</b> Springen <b>E</b> Interagieren</div></div>
+      <div id="game-wrap" class="game-wrap">
+        <canvas id="game" width="960" height="544"></canvas>
+        <div id="interaction-prompt" class="interaction-prompt" hidden></div>
+        <div id="empty-state" class="empty-state" hidden><strong>Nichts zum Spielen gefunden</strong><span>Öffne Prototyp 2, 3 oder 4 und klicke dort auf „Spielen“.</span><a href="../02-tilemap-editor/">Karte bauen</a></div>
+      </div>
+      <footer class="game-status"><span id="position-status">Position 0, 0</span><span id="collision-status">Kollisionen: 0</span><span id="event-status">Bereit</span></footer>
+    </section>
+    <aside class="test-panel">
+      <div><span class="eyebrow">Live-Test</span><h2>Funktionsprüfung</h2></div>
+      <div id="feature-list" class="feature-list"></div>
+      <section class="quest-tracker">
+        <div class="panel-heading"><div><span class="eyebrow">Aktive Aufgabe</span><h3 id="active-quest-title">Keine Quest aktiv</h3></div></div>
+        <p id="active-quest-summary">Sprich mit einem NPC, um eine Quest anzunehmen.</p>
+        <div id="quest-steps" class="quest-steps"></div>
+        <div id="reward-preview" class="reward-preview" hidden></div>
+      </section>
+      <section class="test-help"><h3>Wofür dieser Prototyp da ist</h3><p>Hier wird nichts gebaut oder eingestellt. Prototyp 01 spielt ausschließlich den aktuellen Stand der anderen Prototypen ab.</p><p><b>R</b> setzt Spieler und Questfortschritt zurück. Nicht implementierte Systeme lassen sich rechts simulieren.</p></section>
+    </aside>
+  </main>
+  <dialog id="npc-dialog">
+    <div class="dialog-character"><div id="dialog-sprite" class="dialog-sprite"></div><div><span id="dialog-role" class="eyebrow">Questgeber</span><h2 id="dialog-name">NPC</h2></div></div>
+    <p id="dialog-text"></p><div id="dialog-actions" class="dialog-actions"></div>
+  </dialog>
+  <div id="toast" role="status"></div>
   <script src="main.js"></script>
 </body>
 </html>

@@ -24,7 +24,7 @@ Eine Idle-Aktivität ist deshalb kein Prozess, sondern **ein Zeitstempel plus ei
 Rechenvorschrift**:
 
 ```text
-gespeichert:  { aktivität, gestartetAm, zuletztAbgerechnetAm, effizienzMomentaufnahme }
+gespeichert:  { aktivität, gestartetAm, zuletztAbgerechnetAm }
               +
 gefragt:      "wie spät ist es jetzt?"
               ↓
@@ -84,7 +84,7 @@ schnell am Anfang, deutlich langsamer oben:
 skillXpToNext(n) = round(80 * n^1.42)
 ```
 
-Beispiele: 1→2: 80, 20→21: 5 174, 50→51: 25 585, 99→100: 66 300.
+Beispiele: 1→2: 80, 20→21: 5 631, 50→51: 20 684, 99→100: 54 562.
 
 **Vorläufig.** Balancing in M13.
 
@@ -207,10 +207,14 @@ Berechnung in Schritten:
    `zeit = node.baseTimeMs / (1 + skillBonus + attributBonus + werkzeugBonus + klassenBonus)`
    Untergrenze: 400 ms pro Zyklus, damit Formeln nicht gegen null laufen.
 2. **Zyklenzahl** `n = floor((toMs - fromMs) * efficiency / zeit)`
-3. **Rest** `(toMs - fromMs) - n * zeit / efficiency` wird als `zuletztAbgerechnetAm`
-   zurückbehalten. **Ohne diesen Rest verliert der Spieler bei jeder Abrechnung einen
-   Teilzyklus** — bei Abrechnung alle 30 Sekunden wären das bis zu 10 % Verlust.
-   Das ist der häufigste Fehler in Idle-Spielen und hier ausdrücklich benannt.
+3. **Marker vorrücken:** `lastYieldAt = fromMs + n * zeit / efficiency` — **nicht** auf
+   `toMs`. Die Differenz zu `toMs` ist der angefangene, noch nicht bezahlte Teilzyklus
+   und bleibt dadurch erhalten.
+   **Wird stattdessen auf `toMs` gesetzt, verliert der Spieler bei jeder Abrechnung
+   einen Teilzyklus** — bei 30-Sekunden-Takt und 3-Sekunden-Zyklus bis zu 10 %. Das ist
+   der häufigste Fehler in Idle-Spielen und deshalb hier ausdrücklich benannt.
+   Ein separates Restfeld gibt es nicht: Der Marker trägt den Rest bereits, und zwei
+   Felder für dieselbe Information driften irgendwann auseinander.
 4. **Beute** `n`-fache Auswürfelung der Drop-Tabelle. Bei großem `n` (offline) wird
    nicht `n`-mal gewürfelt, sondern über die Binomialverteilung gezogen — bei 40 Stunden
    und 3 Sekunden Zyklus wären das 48 000 Würfe pro Charakter.
@@ -233,8 +237,8 @@ zunächst null.
 **Test:** `idleYield.test.ts`. Der letzte Punkt ist der wichtigste Test des ganzen
 Projekts — er sichert die Restzeit-Behandlung und die Gleichwertigkeit der Zeiträume.
 
-**Risiko:** Fließkommadrift über tausende Abrechnungen. Deshalb alle Zeiten als
-Ganzzahl-Millisekunden und der Rest als Ganzzahl.
+**Risiko:** Fließkommadrift über tausende Abrechnungen. Deshalb alle Zeiten und auch
+`lastYieldAt` als Ganzzahl-Millisekunden.
 
 ---
 

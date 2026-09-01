@@ -16,7 +16,7 @@ beantwortet, gilt die genannte Vorgabe, und der Plan macht damit weiter.
 
 ## O1 — Technikstack bestätigen
 
-**Status:** blockiert M1
+**Status:** entschieden – empfohlener Stack am 2026-09-01 umgesetzt
 **Betrifft:** [00-grundlagen-und-entscheidungen.md](00-grundlagen-und-entscheidungen.md)
 
 TypeScript, Fastify, WebSocket, SQLite → Postgres, Drizzle, eigener Canvas-Renderer, kein
@@ -29,7 +29,7 @@ Danach ist der Renderer verwachsen.
 
 ## O2 — Bewegungs-Preset
 
-**Status:** blockiert M2/S-2.3
+**Status:** entschieden – `IdleOn-nah` am 2026-09-01 übernommen
 **Betrifft:** `prototypes/01-side-view-movement`
 
 Der Prototyp bietet vier Presets: *IdleOn-nah*, *Snappy*, *Floaty*, *Roh*. Die
@@ -166,7 +166,7 @@ innerhalb von 100. Die Grenze anzuheben ist später eine Zahl, kein Umbau.
 **Betrifft:** Vorgehen
 
 Nach M6 läuft der komplette Kernloop: mehrere Charaktere, parallele Aktivitäten, Kampf,
-Idle, Inventar. Das ist ungefähr Tag 35–45.
+Idle, Inventar. Das ist Tag 36–46.
 
 **Empfehlung:** Dort zwei bis drei Personen spielen lassen, bevor M7 bis M9 rund 25
 weitere Tage in Klassen, Ausrüstung und Welt investieren. Die teuerste Version dieses
@@ -184,6 +184,25 @@ mit Markt und Ranglisten ist die Spielerbasis dann klein.
 
 **Vorgabe:** Deutsch zuerst. Ab M11 liegen alle Texte in Sprachdateien, sodass Englisch
 später eine Übersetzung ist und kein Umbau.
+
+---
+
+## O12 — Direkter Spielerhandel
+
+**Status:** offen, benötigt bis M10/S-10.8
+**Betrifft:** `docs/17` §17.3, §17.6, §17.9
+
+`docs/17` §17.3 sagt, Spieler sollen grundsätzlich miteinander handeln können. §17.6
+nennt den Markt als Weg, der keinen permanenten Kontakt erfordert. Ob es **zusätzlich**
+einen direkten Tausch zwischen zwei Spielern geben soll, sagt das GDD nicht.
+
+**Vorgabe:** nur Markt. Das spart eine zweite Handelsoberfläche mit eigenem
+Bestätigungsablauf und schließt Betrug durch vorgetäuschte Tauschgeschäfte aus.
+
+**Dagegen spricht:** Ein gezielter Tausch unter Bekannten ist über den Markt umständlich
+(einstellen, hoffen, dass niemand anders kauft). Falls das gewünscht ist, ist der
+kleinste Weg ein **gerichtetes Angebot**, das nur ein bestimmter Spieler kaufen kann —
+das nutzt den bestehenden Markt und braucht keine neue Oberfläche.
 
 ---
 

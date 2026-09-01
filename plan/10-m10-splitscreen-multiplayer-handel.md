@@ -221,9 +221,14 @@ Empfänger volles Inventar hat (Postfach hält es).
 Nach `docs/25` §25.23 und `docs/17` §17.6–§17.8: Angebot mit Gegenstand, Menge, Preis,
 Ablaufzeit. Suche nach Name, Kategorie, Seltenheit, Preis.
 
-**Kein direkter Spieler-zu-Spieler-Handel**, nur über den Markt (`docs/17` §17.6, §17.9:
-kein permanenter Kontakt nötig). Das schließt gleichzeitig Betrug durch vorgetäuschte
-Tauschgeschäfte aus.
+**Nur über den Markt, kein direkter Tausch zwischen zwei Spielern.** Das ist eine
+**Auslegung, keine GDD-Vorgabe**: `docs/17` §17.3 erlaubt Spielerhandel grundsätzlich,
+§17.6 und §17.9 stellen den Markt lediglich als Weg dar, der keinen permanenten Kontakt
+erfordert. Ein direkter Tausch ist damit nicht ausgeschlossen, nur nicht gefordert.
+
+Die Beschränkung spart eine zweite Handelsoberfläche und schließt Betrug durch
+vorgetäuschte Tauschgeschäfte aus. Sie steht als **O12** in
+[99-offene-entscheidungen.md](99-offene-entscheidungen.md).
 
 **Sicherheitsanforderungen — hier ist die schärfste Stelle des ganzen Projekts:**
 

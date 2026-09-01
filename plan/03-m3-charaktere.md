@@ -62,10 +62,13 @@ in M3 nur den Wert `idle` annehmen kann:
 ```ts
 type Activity =
   | { type: 'none' }
-  | { type: 'combat';   targetAreaId: AreaId }
+  | { type: 'combat';   areaId: AreaId }
   | { type: 'gather';   nodeId: NodeId }
-  | { type: 'crafting'; recipeId: RecipeId; startedAt: number };
+  | { type: 'crafting'; recipeId: RecipeId };
 ```
+
+In M5 kommen die Zeitfelder `startedAt` und `lastYieldAt` dazu. Die endgültige Form steht
+in [90-datenmodell.md](90-datenmodell.md).
 
 **Fertig wenn:** Migration läuft vorwärts, Bestandsdaten aus M1 bleiben erhalten.
 
@@ -236,7 +239,7 @@ Vorläufige Kurve:
 xpToNext(n) = round(50 * n^1.5 + 25 * n)
 ```
 
-Beispiele: L1→2: 75, L10→11: 1831, L50→51: 19 926, L100→101: 52 500.
+Beispiele: L1→2: 75, L10→11: 1 831, L50→51: 18 928, L100→101: 52 500.
 
 **Vorläufig** und als solche markiert. Das Balancing folgt in M13 (`docs/26` Phase 26).
 Entscheidend ist jetzt nur, dass die Kurve **an einer einzigen Stelle** steht und

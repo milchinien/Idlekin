@@ -6,7 +6,7 @@ ersetzt. Das Spiel bekommt seine eigene visuelle Identität.
 **Aufwand:** 8–12 Tage — stark abhängig vom Umfang der eigenen Produktion
 **Vorbedingungen:** M11
 **GDD-Bezug:** `docs/23-pixel-art-richtung.md`, `docs/27-asset-style-guide.md`,
-`docs/26` Phase 25
+`docs/28-player-animation-production.md`, `docs/26` Phase 25
 
 **Zugehöriges Dokument:** [92-asset-pipeline.md](92-asset-pipeline.md)
 
@@ -77,8 +77,12 @@ Asset bricht den Bau mit klarer Meldung ab.
 Ebenenreihenfolge ist in `docs/27` §27.7 festgelegt und wird nicht verhandelt:
 
 ```text
-body → clothing → pants → hair → hat → accessory → weapon → effect
+weapon_back → body → clothing → pants → hair → hat → accessory → weapon_front → effect
 ```
+
+`weapon_back` liegt unter dem Body (Rückenscheide, Köcher, Stabende, abgewandte Hälfte
+zweihändiger Waffen), `weapon_front` darüber (Klinge, Griff, zugewandte Hand). Ohne diese
+Teilung liegt die Hand neben dem Griff statt darum.
 
 Jede Ebene nutzt **exakt** dieselbe Zellbelegung wie der Body-Atlas:
 
@@ -101,8 +105,22 @@ Referenzsheets zu beschaffen ist Aufgabe S-12.3 und gehört auf die Liste offene
 Punkte** — bis dahin nutzen die betroffenen Aktionen ersatzweise vorhandene
 Animationen (Dash → Run, Cast → Melee).
 
+**Waffenklassen statt eines universellen Melee-Sets:** Ein Helm folgt der Pose, eine Waffe
+bestimmt sie. Zweihandschwung, Dolchstich und Bogenschuss sind eigene Body-Framesätze
+(`melee_1h`, `melee_2h`, `bow`, `staff`) und kein austauschbarer Layer über demselben
+Melee-Frameset. Innerhalb einer Klasse wechseln nur `weapon_back` und `weapon_front`. Der
+Body-Aufwand ist damit auf die Zahl der Waffenklassen begrenzt statt auf die Zahl der
+Waffen — jede neue Klasse braucht aber ein Referenzsheet und gehört deshalb in S-12.3.
+Rotation als Ersatz für gezeichnete Schwungframes ist nach `docs/27` §27.7 ausgeschlossen.
+
 **Umfang:** je Ausrüstungsplatz drei Wertstufen, plus Klassenmerkmale nach `docs/27`
 §27.5 (Krieger breit, Bogenschütze schmal, Magier vertikal, Pet Master mit Begleiter).
+
+**Warum Paletten und keine Unikat-Sheets:** Ein Ausrüstungslayer ist ein Framesatz, kein
+Sprite. Der Atlas belegt 50 Frames, also kostet jedes optisch eigenständige Rüstungsteil
+50 posengenaue Handzeichnungen. Der Produktionsplan sind darum `8–15` Basisformen je
+Platz plus Farbvarianten (`docs/27` §27.7). Item-Daten trennen dreifach: Werte, Formsatz,
+Palette. Der Player-Body bleibt vom Palettentausch ausgenommen.
 
 **Fertig wenn:** Ein Charakter mit vollständiger Ausrüstung zeigt in allen sieben
 Animationen deckungsgleiche Ebenen ohne Versatz.
@@ -111,12 +129,26 @@ Animationen deckungsgleiche Ebenen ohne Versatz.
 
 ### S-12.3 Fehlende Animationen beschaffen
 
-**Was:** Referenzsheets für Dash, Cast, Bow und die vier Sammelanimationen.
+**Was:** Referenzsheets für Dash, Cast, Bow, Block und die vier Sammelanimationen.
 
 **Details:** Nach `docs/27` §27.7 dürfen fehlende Aktionen **nicht frei erfunden**
 werden. Die Referenz muss geometrisch zum Pflichttemplate passen.
 
-Zwei Wege:
+`docs/28` regelt das inzwischen im Detail und ist hier die maßgebliche Quelle:
+
+- Neue Aktionen kommen als **separate Sheets**; `toUse.png` wird nie überschrieben (§28.1)
+- Geometrie ist hart: Bodenlinie `y = 79`, Zentrum `x = 64`, Figur max. `32 px` hoch (§28.2)
+- Jede längere Aktion wird in **Einstieg, Loop und Ausstieg** getrennt, mit pixelgenauen
+  Anschlussposen (§28.5)
+- Kontakt-, Treffer- und Releaseframes werden markiert (§28.7)
+- Die Prüfliste aus §28.7 entscheidet, ob ein Sheet Produktionsasset wird
+
+**Das Block-Paket ist bereits vollständig spezifiziert** (§28.6: `block_start` 5/12,
+`block_hold` 4/6 Loop, `block_hit` 4/14, `block_end` 5/12). Es ist damit die erste neue
+Aktion, die ohne weitere Klärung gebaut werden kann — und die Vorlage dafür, wie Dash,
+Cast und Bow zu strukturieren sind.
+
+Zwei Wege für die übrigen:
 
 1. Passendes Referenzsheet beschaffen — für Fernkampf existiert unter
    `assets/referenz (MUSS)/archer animation referenz/` bereits Material
@@ -129,8 +161,8 @@ zwischen Werkzeug und Ressource. Ohne diese Animationen bleibt das Idle-System a
 optisch stumm — und die Sichtbarkeit von Idle-Arbeit ist laut `docs/12` §12.9 eine
 Kernanforderung.
 
-**Fertig wenn:** Sieben zusätzliche Animationen existieren, folgen dem Template und
-werden von der Pipeline akzeptiert.
+**Fertig wenn:** Die zusätzlichen Animationen existieren, folgen dem Template aus
+`docs/28`, bestehen die Prüfliste §28.7 und werden von der Pipeline akzeptiert.
 
 ---
 

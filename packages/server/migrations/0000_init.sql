@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS players (
+  id TEXT PRIMARY KEY NOT NULL,
+  name TEXT NOT NULL UNIQUE,
+  currency INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  last_seen_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS characters (
+  id TEXT PRIMARY KEY NOT NULL,
+  player_id TEXT NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  level INTEGER NOT NULL DEFAULT 1,
+  experience INTEGER NOT NULL DEFAULT 0,
+  area_id TEXT NOT NULL,
+  pos_x INTEGER NOT NULL,
+  pos_y INTEGER NOT NULL,
+  created_at INTEGER NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS character_name_per_player ON characters(player_id, name);
+CREATE TABLE IF NOT EXISTS sessions (
+  token TEXT PRIMARY KEY NOT NULL,
+  player_id TEXT NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  expires_at INTEGER NOT NULL
+);

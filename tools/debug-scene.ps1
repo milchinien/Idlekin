@@ -11,10 +11,11 @@ Add-Type -AssemblyName System.Drawing
 
 $root = Get-Location
 $bg = [System.Drawing.Bitmap]::FromFile((Join-Path $root "assets/world/$World/backgrounds/$Background"))
-$atlas = [System.Drawing.Bitmap]::FromFile((Join-Path $root "assets/world/$World/tiles/platform-tileset.png"))
+$atlas = [System.Drawing.Bitmap]::FromFile((Join-Path $root "assets/world/$World/tiles/platform-tileset-surface.png"))
 
 $VIEW_W = 480; $VIEW_H = 270; $GROUND_Y = 230
 $TileSize = 32; $TileSource = 64
+$Columns = 12; $MiddleCount = 10
 $srcPerWorld = $TileSource / $TileSize
 $bodyInset = 8
 $bodyStep = ($TileSource - $bodyInset) / $srcPerWorld
@@ -74,10 +75,10 @@ function Draw-Platform($p) {
   }
   $capW = 0
   if ($w -ge ($TileSize*2)) { $capW = $TileSize }
-  if ($capW -gt 0) { & $col 0 $capW 0; & $col ($w - $capW) $capW 3 }
+  if ($capW -gt 0) { & $col 0 $capW 0; & $col ($w - $capW) $capW ($Columns - 1) }
   $ti = 0
   for ($ox = $capW; $ox -lt ($w - $capW); $ox += $TileSize) {
-    & $col $ox ([Math]::Min($TileSize, $w - $capW - $ox)) (1 + ($ti % 2))
+    & $col $ox ([Math]::Min($TileSize, $w - $capW - $ox)) (1 + ($ti % $MiddleCount))
     $ti++
   }
 }

@@ -1,7 +1,7 @@
 # Debug-Hilfe: rendert das Plattform-Tileset vergroessert in eine PNG-Datei,
 # damit man sich die einzelnen Kacheln ansehen kann.
 param(
-  [string]$AtlasPath = 'assets/world/meadow-mountains/tiles/platform-tileset.png',
+  [string]$AtlasPath = 'assets/world/meadow-mountains/tiles/platform-tileset-surface.png',
   [string]$TargetPath = 'tools/_debug-tileset.png',
   [int]$Zoom = 3
 )

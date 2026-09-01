@@ -115,6 +115,8 @@ Der finale Player-Atlas setzt die verbindliche Player-Basispalette. Seine Pixel 
 
 Der vom Projekt vorgegebene Atlas `assets/player/Final Player/toUse.png` definiert die verbindliche technische und visuelle Geometrie des Players. Frühere generierte Player-Versionen sind verworfen. Dieser Atlas ist für alle weiteren Player-Body- und Cosmetic-Animationen verbindlich und darf nicht durch abgeleitete Ersatzversionen ausgetauscht werden.
 
+Die detaillierten Geometrie-, Übergangs-, Layer- und Abnahmeregeln für neue Player-Aktionen stehen verbindlich in [`28-player-animation-production.md`](28-player-animation-production.md).
+
 ### Finaler Atlas
 
 - **Fest:** Atlasgröße `1280 × 1152 px`, angeordnet als `10 × 9` Zellen.
@@ -137,7 +139,9 @@ Climb, Dash, Cast und Bow sind noch nicht Teil des bestätigten Pflicht-Template
 
 ### Layer-Reihenfolge
 
-`body → clothing → pants → hair → hat → accessory → weapon → effect`
+`weapon_back → body → clothing → pants → hair → hat → accessory → weapon_front → effect`
+
+Der Waffenlayer ist bewusst geteilt. `weapon_back` trägt alles, was hinter der Figur liegt: Rückenscheide, Köcher, Stabende und die abgewandte Hälfte einer zweihändig geführten Waffe. `weapon_front` trägt Klinge, Griff und die zugewandte Hand darüber. Erst dadurch greift die Hand sichtbar um den Griff, statt neben ihm zu liegen.
 
 Jeder Layer muss:
 
@@ -146,6 +150,44 @@ Jeder Layer muss:
 - in leeren Frames vollständig transparent bleiben,
 - alle Pixel innerhalb seiner Zelle halten,
 - ohne Änderung der Gameplay-Hitbox funktionieren.
+
+Jeder Layer nutzt die vollständige `128 × 128 px`-Zelle am gemeinsamen Anchor `x: 64, y: 80`. Zugeschnittene Teilbilder mit eigenem Positions-Offset sind nicht zulässig; der Versatz jedes Layers ist damit grundsätzlich `(0, 0)`.
+
+### Hinterer Arm
+
+- **Fest:** Ausrüstung bekleidet ausschließlich den zugewandten Arm. Der abgewandte Arm bleibt in Body-Farbe.
+- Grund: `toUse.png` ist ein einzelnes, nicht zerlegbares Body-Sheet. Ein Rüstungsteil, das beide Schultern deckt, müsste teils unter und teils über dem Body liegen.
+- Eine Aufspaltung in `arm_back → body → arm_front` bleibt unzulässig, solange `toUse.png` die Pflichtvorlage ist.
+- Bei der verbindlichen Figurgröße von etwa `20 × 32 px` betrifft das zwei bis drei Pixel und ist visuell folgenlos.
+
+### Ausrüstungsvarianten und Produktionsumfang
+
+Ein Ausrüstungslayer ist kein Sprite, sondern ein vollständiger Framesatz. Der bestätigte Player-Atlas belegt `50` Frames (Idle 10, Walk 10, Run 10, Jump 6, Fall 4, Fall-Loop 3, Melee 7). Ein einziges optisch eigenständiges Rüstungsteil kostet also 50 handgepixelte, posengenaue Frames.
+
+- **Fest:** Optische Vielfalt entsteht über Paletten, nicht über Unikat-Sheets.
+- **Vorläufig:** `8–15` Basisformen je Ausrüstungsplatz; jede Basisform trägt beliebig viele Farbvarianten.
+- Item-Daten trennen deshalb dreifach: Werte, Formsatz und Palette.
+
+```text
+Item 1027 "Goldhelm"
+  slot:      HEAD
+  spriteSet: helm_horned   // 50 Frames, einmal gepixelt
+  palette:   gold          // 4-5 Farbindizes
+```
+
+- Die Player-Basispalette aus §27.6 bleibt davon unberührt. Body-Pixel werden nie umgefärbt; der Palettentausch gilt ausschließlich für Ausrüstungs- und Effektlayer.
+- Bei `20 × 32 px` differenziert Rüstung über Silhouettenzuwachs – Schulterspitze, Helmhorn, Umhangsaum – und Palette, nicht über Textur.
+- Basisformen werden deshalb entlang der Wertstufen geplant, nicht entlang einzelner Items.
+
+### Waffenklassen
+
+Ein Helm folgt der Pose. Eine Waffe bestimmt sie. Zweihandschwung, Dolchstich und Bogenschuss sind unterschiedliche Body-Animationen und kein austauschbarer Layer über demselben Melee-Framesatz.
+
+- **Fest:** Jede Waffenklasse besitzt einen eigenen Body-Framesatz, zum Beispiel `melee_1h`, `melee_2h`, `bow`, `staff`.
+- **Fest:** Innerhalb einer Klasse teilen sich alle Waffen denselben Body; es wechseln nur `weapon_back` und `weapon_front`.
+- Eine neue Waffenklasse ist eine neue Aktion und benötigt ein geometrisch passendes Referenz-Sheet nach [`28-player-animation-production.md`](28-player-animation-production.md). Sie wird nicht frei erfunden.
+- **Fest:** Waffen werden nicht per Rotation animiert. Eine gedrehte 12-px-Klinge erzeugt Antialiasing und gebrochene Kanten und verstößt gegen §27.3. Jede Schwungphase ist ein gezeichneter Frame.
+- Beim Spiegeln nach links wechseln `weapon_back` und `weapon_front` nicht die Ebene; asymmetrische Waffen brauchen eine geprüfte Seitenvariante.
 
 ### Animation
 

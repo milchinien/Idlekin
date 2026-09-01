@@ -1,0 +1,33 @@
+{
+  "id": "area.dorf",
+  "name": "Waldlichtung",
+  "size": { "width": 1680, "height": 270 },
+  "tileSize": 16,
+  "layers": [
+    { "kind": "background", "image": "/world/meadow-forest/backgrounds/meadow-forest-day.png", "parallax": 0.25 },
+    { "kind": "tiles", "image": "/world/meadow-forest/tiles/platform-tileset-layered.png", "parallax": 1 }
+  ],
+  "collision": {
+    "solids": [
+      { "x": 0, "y": 230, "w": 360, "h": 40 },
+      { "x": 400, "y": 230, "w": 320, "h": 40 },
+      { "x": 780, "y": 230, "w": 300, "h": 40 },
+      { "x": 1160, "y": 230, "w": 520, "h": 40 },
+      { "x": 520, "y": 198, "w": 64, "h": 32 },
+      { "x": 584, "y": 166, "w": 64, "h": 64 }
+    ],
+    "platforms": [
+      { "x": 170, "y": 180, "w": 96, "h": 6 },
+      { "x": 900, "y": 175, "w": 128, "h": 6 }
+    ]
+  },
+  "spawns": [
+    { "id": "spawn.default", "x": 64, "y": 190 },
+    { "id": "spawn.vonWiese", "x": 1480, "y": 190 }
+  ],
+  "portals": [
+    { "id": "portal.dorf.wiese", "targetArea": "area.wiese", "targetSpawn": "spawn.vonDorf", "position": { "x": 1510, "y": 230 }, "requirement": null }
+  ],
+  "nodes": [],
+  "enemies": []
+}

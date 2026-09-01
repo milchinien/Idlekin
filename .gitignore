@@ -1,5 +1,11 @@
 node_modules/
 dist/
+packages/*/dist/
+packages/client/public/atlas/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+tools/_*.png
 .vite/
 *.local
 .DS_Store

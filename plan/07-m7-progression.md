@@ -58,9 +58,15 @@ sinnvoll macht.
 richtigen Antwort wird:
 
 ```ts
-bonus(wert) = wert * 0.01            // linear bis 100
-            + max(0, wert - 100) * 0.004   // darüber ein Viertel
+bonus(wert) = min(wert, 100) * 0.01          // bis 100 voller Ertrag
+            + max(0, wert - 100) * 0.0025    // darüber ein Viertel davon
 ```
+
+Beispiele: 50 → 0,50 · 100 → 1,00 · 150 → 1,125 · 300 → 1,50.
+
+**Das `min` ist nicht kosmetisch.** Ohne es addiert sich der zweite Term auf den vollen
+ersten und der Ertrag steigt oberhalb von 100 *schneller* statt langsamer — also genau
+umgekehrt zur Absicht.
 
 **Zwei Quellen für Attributpunkte** (`docs/05` §5.7, `docs/19` §19.8):
 
@@ -234,6 +240,20 @@ der Klassenentwicklung.
 - `areaAtPoint` — Fläche an einer Zielstelle, mit Vorwarnung
 - `buffSelf` — zeitlich begrenzter Modifikator
 - `summonPet` — begleitende Einheit mit eigener einfacher KI
+- `holdStance` — **gehaltener Zustand**, solange die Taste gedrückt bleibt
+
+**Zu `holdStance`:** Die defensive Nahkampffähigkeit ist kein kurzer Effekt, sondern ein
+Zustand. `docs/28` §28.6 gibt ihn als vierteiliges Animationspaket vor
+(`block_start → block_hold → block_hit → block_end`), und das ist keine reine
+Darstellungsfrage: Es beschreibt eine Fähigkeit, die **gehalten** wird, Treffer
+abfängt und beim Brechen nach `hurt` wechselt.
+
+Die Zustandsmaschine muss das tragen: Einstieg, Halten mit Bewegungseinschränkung,
+Trefferreaktion ohne Verlassen des Zustands, Ausstieg. Ein gehaltener Zustand ist
+außerdem der einzige Fähigkeitstyp, der die Netzwerkvorhersage aus M2/S-2.4 betrifft —
+Beginn und Ende sind zwei getrennte Eingaben, und ein verlorenes Ende darf den Charakter
+nicht dauerhaft blockieren. **Zeitliche Obergrenze für jeden gehaltenen Zustand
+einplanen.**
 
 Jede weitere Fähigkeit ist danach **ein Datensatz**, kein Code. `docs/25` §25.26 verlangt
 genau das.

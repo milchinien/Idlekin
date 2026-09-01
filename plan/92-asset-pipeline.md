@@ -1,7 +1,12 @@
 # Asset-Pipeline
 
 Der reproduzierbare Weg von der Quelldatei zum ausgelieferten Atlas. Ableitung aus
-`docs/27-asset-style-guide.md`; gebaut in M12/S-12.1, genutzt ab dann für jedes Asset.
+`docs/27-asset-style-guide.md` und `docs/28-player-animation-production.md`; gebaut in
+M12/S-12.1, genutzt ab dann für jedes Asset.
+
+**Zuständigkeit der beiden Quellen:** `docs/27` regelt den Stil aller Assets. `docs/28`
+regelt verbindlich Geometrie, Übergänge, Layer und Abnahme **neuer Player-Aktionen** und
+ist dort die genauere Quelle (`docs/27` §27.7 verweist ausdrücklich darauf).
 
 ---
 
@@ -77,6 +82,21 @@ erzeugt jeder Bau eine Änderung in der Versionsverwaltung, auch wenn nichts and
 | Alphakanal | nur 0 oder 255 — keine weichen Kanten | §27.3 |
 | Tileraster | Welt-Tiles Vielfache von 16 | §27.4 |
 | Player-Palette | Konturen und Basisfarben unverändert | §27.6 |
+| **Player-Bodenlinie** | in bodengebundenen Frames `y = 79` | §28.2 |
+| **Player-Zentrum** | `x = 64` | §28.2 |
+| **Player-Grundfigur** | max. `32 px` hoch, ~`20 px` breit | §28.2 |
+| **Idle-Frame 1** | Bounding Box `x 53–72`, `y 48–79` | §28.2 |
+| **Anschlussframes** | letzter `_start` = erster `_loop`; letzter `_end` = Zielpose | §28.5 |
+| **Ereignisframes** | Kontakt, Treffer, Release markiert | §28.7 |
+| Leere Zellen | vollständig transparent | §28.3 |
+
+**Zur Bodenlinie:** `docs/27` §27.4 nennt den Anker `y = 80`, `docs/28` §28.2 die
+Bodenlinie `y = 79`. Das ist **kein Widerspruch** — die unterste Körperpixelreihe ist 79,
+der Anker sitzt auf der Kante darunter. Beide Werte werden geprüft.
+
+**Zur Breitenprüfung:** `docs/28` §28.2 erlaubt breitere Posen, wenn die Aktion sie
+erfordert (Bogenschuss, große Waffe, Effekt). Die Prüfung warnt deshalb, statt
+abzubrechen — außer bei Höhe und Bodenlinie, die hart sind.
 
 **Zur Alphaprüfung:** Halbtransparente Pixel entstehen unbemerkt beim Skalieren oder
 Drehen in Bildbearbeitungsprogrammen. Sie widersprechen §27.3 (harte Kanten) und fallen
@@ -108,11 +128,40 @@ Aus `docs/27` §27.7, **nicht verhandelbar**:
 | Fall-Loop | (0–2, 6) | 3 | 8 | ja |
 | Melee | (0–2, 7) + (0–3, 8) | 7 | 14 | nein |
 
-**Ebenenreihenfolge:** `body → clothing → pants → hair → hat → accessory → weapon → effect`
+**Ebenenreihenfolge:** `weapon_back → body → clothing → pants → hair → hat → accessory → weapon_front → effect`
+
+Der Waffenlayer ist geteilt: `weapon_back` unter dem Body für Rückenscheide, Köcher,
+Stabende und die abgewandte Hälfte zweihändiger Waffen, `weapon_front` darüber für
+Klinge, Griff und zugewandte Hand.
 
 **Noch nicht im bestätigten Template:** Climb, Dash, Cast, Bow. `docs/27` §27.7 verbietet
 ausdrücklich, sie frei zu erfinden — es braucht geometrisch passende Referenzsheets.
 Behandlung in M12/S-12.3.
+
+### Neue Aktionen
+
+`docs/28` §28.1 legt fest: Neue Aktionen kommen **als separate Sheets**, nicht in
+`toUse.png`. Die Datei wird nie überschrieben. Identität, Anatomie, Silhouette,
+Pixelmaßstab, Palette, Outline, Blickrichtung, Anker und Bodenlinie werden 1:1
+übernommen — eine „ähnliche Figur" ist ausdrücklich unzulässig.
+
+Der einzige bereits vollständig spezifizierte Neuzugang ist das **Block-Paket**
+(`docs/28` §28.6):
+
+| Clip | Frames | FPS | Loop | Folgezustand |
+|---|---:|---:|---|---|
+| `block_start` | 5 | 12 | nein | `block_hold` |
+| `block_hold` | 4 | 6 | ja | `block_hit` oder `block_end` |
+| `block_hit` | 4 | 14 | nein | `block_hold` |
+| `block_end` | 5 | 12 | nein | `idle` |
+
+`hurt` und `death` dürfen jede Aktion sofort unterbrechen (§28.5). Ein gebrochener Block
+wechselt von `block_hit` nach `hurt` oder `death` (§28.6).
+
+**Abnahme:** Die Prüfliste aus `docs/28` §28.7 gilt vor der ersten Verwendung eines
+Sheets. Zehn ihrer zwölf Punkte deckt die Pipeline automatisch ab; die beiden übrigen —
+„entspricht dem verbindlichen Player statt nur einem ähnlichen Design" und „im Prototyp
+visuell geprüft" — bleiben Sichtprüfung.
 
 ---
 
@@ -172,10 +221,28 @@ Der Atlas-Lader (`packages/client/src/render/atlas.ts`, ab M2/S-2.2) liest das J
 stellt bereit:
 
 ```ts
-type AtlasFrame  = { x: number; y: number; w: number; h: number; ox: number; oy: number };
-type AtlasAnim   = { frames: AtlasFrame[]; fps: number; loop: boolean };
-type Atlas       = { image: HTMLImageElement; anims: Record<string, AtlasAnim> };
+type AtlasFrame = { x: number; y: number; w: number; h: number; ox: number; oy: number };
+type AtlasEvent = { frame: number; kind: 'contact' | 'hit' | 'release' };
+type AtlasAnim  = {
+  frames: AtlasFrame[];
+  fps: number;
+  loop: boolean;
+  events: AtlasEvent[];   // docs/28 §28.7
+  next?: string;          // Folgeclip, docs/28 §28.5
+};
+type Atlas      = { image: HTMLImageElement; anims: Record<string, AtlasAnim> };
 ```
+
+**`events` ist nicht optional.** `docs/28` §28.7 verlangt markierte Kontakt-, Treffer-
+und Releaseframes als Abnahmebedingung. Ohne sie muss die Spiellogik raten, wann ein
+Angriff trifft — typischerweise über eine fest verdrahtete Framenummer, die bei jeder
+Animationsänderung still falsch wird. Der Treffer aus M6/S-6.3 wird zum `hit`-Ereignis
+ausgelöst, nicht zum Animationsstart.
+
+**`next` bildet die Kette aus `docs/28` §28.5:**
+`idle → <aktion>_start → <aktion>_loop → <aktion>_end → idle`.
+Die Pipeline prüft, dass der letzte `_start`-Frame pixelgleich zum ersten `_loop`-Frame
+ist und der letzte `_end`-Frame zur Zielpose — sonst springt die Figur sichtbar.
 
 `ox`/`oy` tragen den beim Zuschneiden entfernten Rand. **Ohne sie sitzt jede
 zugeschnittene Ebene versetzt** — der häufigste Fehler bei selbstgebauten Packern.

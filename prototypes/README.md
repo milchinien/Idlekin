@@ -38,6 +38,9 @@ Der Dev-Server ist eine Bequemlichkeit, keine Abhängigkeit: kein Prototyp darf 
 | Ordner | Frage, die er beantworten soll | Status | Erkenntnis |
 |---|---|---|---|
 | `_template` | — (Vorlage) | — | — |
-| `01-side-view-movement` | Fühlt sich die Steuerung in 2D-Seitenansicht (IdleOn-Stil) gut an? | spielbar | offen |
+| `01-side-view-movement` | Funktionieren die Inhalte der anderen Prototypen gemeinsam im Spiel? | spielbar | gemeinsamer Testmodus |
+| `02-tilemap-editor` | Lässt sich mit den gelieferten 32-px-Tiles schnell eine Map inklusive Kollisionen bauen? | spielbar | offen |
+| `03-world-builder` | Lassen sich Kartenabschnitte zu einer Welt zusammensetzen und mit Portalen verbinden? | spielbar | offen |
+| `04-npc-quest-editor` | Lassen sich NPCs, Dialoge und mehrstufige Quests direkt auf der Welt gestalten? | spielbar | offen |
 
 > Trag jeden Prototyp hier ein. Die Spalte **Erkenntnis** ist der eigentliche Wert — der Code darf danach sterben.

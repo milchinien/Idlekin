@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototyp 04 – NPC- & Quest-Schmiede</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/prototypes/" title="Zur Prototypen-Auswahl"><h1>Quest-Schmiede</h1><span>Prototyp 04</span></a>
+    <div class="world-source"><span class="eyebrow">Aktive Welt</span><strong id="world-name">Keine Welt geladen</strong></div>
+    <div class="top-actions">
+      <button id="play-project" class="play-button">▶ Spielen</button>
+      <button id="refresh-world">Welt aus Prototyp 03 laden</button>
+      <button id="save-project" class="primary">Speichern</button>
+      <button id="load-project">Gespeichertes Projekt</button>
+      <button id="export-project">JSON exportieren</button>
+      <button id="import-project">JSON importieren</button>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="aside-heading"><div><span class="eyebrow">Besetzung</span><h2>NPCs</h2></div><button id="new-npc" class="icon-button" title="NPC-Vorlage auswählen">+</button></div>
+      <p class="aside-help">Wähle zuerst eine Figuren-Vorlage und platziere sie anschließend in einem Kartenabschnitt.</p>
+      <div id="npc-list" class="npc-list"></div>
+      <div class="quest-guide">
+        <span class="eyebrow">Quest-Rezept</span>
+        <ol><li>NPC platzieren</li><li>Dialog vor Annahme schreiben</li><li>Aufgaben als Etappen bauen</li><li>Ziele direkt in der Welt anklicken</li><li>Belohnung und Abschluss festlegen</li></ol>
+      </div>
+      <a href="../03-world-builder/" class="editor-link">← Welt & Portale bearbeiten</a>
+    </aside>
+
+    <section class="editor">
+      <div class="stage-toolbar">
+        <div class="tool-group" aria-label="Werkzeuge">
+          <button class="tool active" data-tool="select" title="Auswählen (V)"><b>V</b> Auswählen</button>
+          <button class="tool" data-tool="npc" title="Gewählten NPC platzieren (N)"><b>N</b> NPC platzieren</button>
+          <button class="tool" data-tool="pan" title="Ansicht verschieben (H oder Leertaste)"><b>H</b> Hand</button>
+        </div>
+        <label>Zoom <select id="zoom"><option value="0.25">25 %</option><option value="0.4" selected>40 %</option><option value="0.6">60 %</option><option value="0.8">80 %</option><option value="1">100 %</option></select></label>
+        <label><input id="show-portals" type="checkbox" checked> Portale</label>
+        <button id="center-world">Alles zeigen</button>
+      </div>
+      <div id="target-banner" class="target-banner" hidden><strong id="target-title">Questziel wählen</strong><span id="target-help"></span><button id="cancel-target">Abbrechen</button></div>
+      <div id="viewport" class="viewport">
+        <div id="world" class="world">
+          <div id="empty-world" class="empty-world"><strong>Hier fehlt noch eine Welt.</strong><span>Speichere eine Welt in Prototyp 03 und lade sie oben.</span><a href="../03-world-builder/">Weltenbauer öffnen</a></div>
+        </div>
+      </div>
+      <footer class="statusbar"><span id="status-tool">Auswählen</span><span id="status-count">0 NPCs · 0 Quests</span><span id="save-state">Nicht gespeichert</span></footer>
+    </section>
+
+    <aside class="inspector">
+      <div id="nothing-selected" class="nothing-selected"><strong>Wähle einen NPC.</strong><span>Dann kannst du seine Geschichte, Quests und Belohnungen bearbeiten.</span></div>
+      <div id="npc-editor" hidden>
+        <div class="inspector-head"><div><span class="eyebrow">Questgeber</span><h2 id="inspector-title">NPC</h2></div><button id="delete-npc" class="danger small">NPC löschen</button></div>
+        <div class="tabs" role="tablist"><button class="tab active" data-tab="npc">NPC & Dialog</button><button class="tab" data-tab="quests">Quests <span id="quest-count-badge">0</span></button></div>
+
+        <section id="tab-npc" class="tab-panel">
+          <div class="form-grid"><label>Name<input id="npc-name" maxlength="40"></label><label>Rolle<input id="npc-role" maxlength="50" placeholder="z. B. Hüterin des Portals"></label></div>
+          <label>Kurzbeschreibung<textarea id="npc-description" rows="2" maxlength="180" placeholder="Was macht diesen NPC interessant?"></textarea></label>
+          <div class="placement-card"><div><span class="eyebrow">Position</span><strong id="npc-position">Noch nicht platziert</strong></div><button id="place-selected-npc">In Welt platzieren</button></div>
+          <div class="section-heading"><div><h3>Dialog vor der Quest</h3><p>Diese Zeilen sagt der NPC nacheinander, bevor der Spieler die Quest annehmen kann.</p></div><button id="add-dialogue">+ Text</button></div>
+          <div id="dialogue-list" class="dialogue-list"></div>
+          <label>Annahmefrage<input id="npc-offer-text" maxlength="120" placeholder="Hilfst du mir, das flüsternde Portal zu untersuchen?"></label>
+        </section>
+
+        <section id="tab-quests" class="tab-panel" hidden>
+          <div class="quest-toolbar"><select id="quest-select" aria-label="Quest auswählen"></select><button id="add-quest">+ Neue Quest</button></div>
+          <div id="no-quest" class="empty-panel">Dieser NPC hat noch keine Quest.</div>
+          <div id="quest-editor" hidden>
+            <div class="quest-number" id="quest-number">QUEST 1</div>
+            <label>Questtitel<input id="quest-title" maxlength="70"></label>
+            <label>Auftrag / Motivation<textarea id="quest-summary" rows="3" maxlength="300" placeholder="Warum sollte der Spieler diese Quest machen?"></textarea></label>
+            <div class="section-heading"><div><h3>Quest-Etappen</h3><p>Mehrere Etappen sorgen für Aufbau, Überraschung und einen klaren Spannungsbogen.</p></div><button id="add-step">+ Etappe</button></div>
+            <div id="step-list" class="step-list"></div>
+            <div class="reward-panel">
+              <div class="section-heading"><div><h3>Belohnungen</h3><p>XP und Gold sind bis zur Spiel-Implementierung Platzhalter.</p></div></div>
+              <div class="reward-grid"><label><span>XP <em>PLATZHALTER</em></span><input id="reward-xp" type="number" min="0" step="10"></label><label><span>Gold <em>PLATZHALTER</em></span><input id="reward-gold" type="number" min="0" step="10"></label></div>
+              <label>Gegenstand / Freischaltung<input id="reward-item" maxlength="80" placeholder="z. B. Moosiger Portalschlüssel"></label>
+            </div>
+            <label>Text nach Abschluss<textarea id="quest-complete-text" rows="2" maxlength="220" placeholder="Du hast mehr Mut, als ich dachte …"></textarea></label>
+            <label class="check-row"><input id="quest-optional" type="checkbox"> Optionale Nebenquest</label>
+            <button id="delete-quest" class="danger full">Quest löschen</button>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="load-dialog"><div class="dialog-heading"><div><span class="eyebrow">Lokaler Speicher</span><h2>Gespeichertes Questprojekt</h2></div><button id="close-dialog" class="icon-button">×</button></div><div id="saved-project" class="saved-project"></div></dialog>
+  <dialog id="preset-dialog" class="preset-dialog"><div class="dialog-heading"><div><span class="eyebrow">Figur auswählen</span><h2>NPC-Vorlagen</h2></div><button id="close-presets" class="icon-button">×</button></div><p class="preset-help">Wähle eine Figur. Danach kannst du sie sofort in deiner Welt platzieren.</p><div id="preset-list" class="preset-list"></div></dialog>
+  <div id="toast" role="status"></div>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 # Plattformen des Prototyps in eine PNG-Datei. Damit laesst sich anschauen,
 # was der Kachel-Code tatsaechlich produziert.
 param(
-  [string]$AtlasPath = 'assets/world/meadow-mountains/tiles/platform-tileset.png',
+  [string]$AtlasPath = 'assets/world/meadow-mountains/tiles/platform-tileset-surface.png',
   [string]$TargetPath = 'tools/_debug-platforms-neu.png',
   [int]$Zoom = 3,
   [int]$TileSize = 32,
@@ -44,6 +44,8 @@ $white = [System.Drawing.Brushes]::White
 $boxPen = New-Object System.Drawing.Pen -ArgumentList ([System.Drawing.Color]::FromArgb(255, 255, 255, 0)), 1
 
 function Draw-Platform($gfx, $src, $px, $py, $w, $h, $Zoom, $TileSize, $TileSource) {
+  $columns = 12
+  $middleCount = 10
   $srcPerWorld = $TileSource / $TileSize
 $bodyInset = 8
 $bodyStep = ($TileSource - $bodyInset) / $srcPerWorld
@@ -72,13 +74,13 @@ $bodyStep = ($TileSource - $bodyInset) / $srcPerWorld
   if ($w -ge ($TileSize * 2)) { $capW = $TileSize }
   if ($capW -gt 0) {
     & $column 0 $capW 0
-    & $column ($w - $capW) $capW 3
+    & $column ($w - $capW) $capW ($columns - 1)
   }
 
   $tileIndex = 0
   for ($offsetX = $capW; $offsetX -lt ($w - $capW); $offsetX += $TileSize) {
     $drawWidth = [Math]::Min($TileSize, $w - $capW - $offsetX)
-    & $column $offsetX $drawWidth (1 + ($tileIndex % 2))
+    & $column $offsetX $drawWidth (1 + ($tileIndex % $middleCount))
     $tileIndex++
   }
 }

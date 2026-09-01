@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Idlekin</title></head>
+<body>
+  <main id="app">
+    <section id="game-shell">
+      <canvas id="game" width="480" height="270" aria-label="Idlekin Spielwelt"></canvas>
+      <div id="hud"><span id="identity">–</span><span id="area">–</span><span id="status">getrennt</span><span id="latency">– ms</span></div>
+      <p id="help">A/D oder ←/→ laufen · Leertaste/W/↑ springen · S/↓ Plattform verlassen · E Portal · F1 Hitboxen</p>
+    </section>
+    <dialog id="login"><form method="dialog"><h1>Idlekin</h1><p>Betritt die Welt mit deinem Entwicklungsnamen.</p><input id="player-name" maxlength="24" value="Spieler" autocomplete="nickname"><button id="play" value="default">Spielen</button><output id="login-error"></output></form></dialog>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

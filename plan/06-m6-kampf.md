@@ -127,8 +127,8 @@ Gegner irgendwann null Schaden machen oder unbesiegbar werden. Diese Wahl ist ni
 Balancing, sondern Struktur — sie steht deshalb hier und nicht in M13.
 
 **Fertig wenn:** Die Formel ist implementiert, getestet für Grenzfälle (Verteidigung 0,
-sehr hohe Verteidigung, Level 1 gegen Level 100) und liefert nie Werte unter 1 oder
-über dem Rohschaden.
+sehr hohe Verteidigung, Level 1 gegen Level 100), liefert nie Werte unter 1 und ohne
+kritischen Treffer nie mehr als den Rohschaden.
 
 ---
 
@@ -201,7 +201,7 @@ und überlebt einen Neustart.
 
 **Details:**
 
-Aktivität `{ type: 'combat', targetAreaId }`. Der Charakter greift automatisch den
+Aktivität `{ type: 'combat', areaId }`. Der Charakter greift automatisch den
 nächsten verfügbaren Gegner an, nutzt normale Angriffe und — je nach Klasse (M7) —
 Fähigkeiten automatisch (`docs/06` §6.8, `docs/07` §7.5).
 

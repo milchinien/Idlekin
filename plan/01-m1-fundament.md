@@ -103,9 +103,14 @@ Felder, die erst später gefüllt werden (Attribute, Skills, Klasse, Inventar), 
 **noch nicht angelegt**. Jeder Meilenstein bringt seine eigene Migration mit. Ein
 vorausschauend leeres Schema ist kein Vorteil, sondern eine Behauptung über die Zukunft.
 
-Ausnahme: `characters.stateJson` als `TEXT` für Zustandsdaten, die noch keine eigene
-Tabelle verdienen. **Regel:** Was abgefragt oder sortiert werden muss (Ranglisten,
-Handel), bekommt eine Spalte. Was nur am Stück geladen wird, darf ins JSON.
+**Regel für alle späteren Migrationen:** Was abgefragt oder sortiert werden muss
+(Ranglisten, Handel, Suche), bekommt eine eigene Spalte oder Tabelle. Was nur am Stück
+geladen und geschrieben wird, darf in eine `*Json`-Spalte — so wie `activityJson` und
+`appearanceJson` ab M3.
+
+**Kein vorsorgliches Sammelfeld.** Eine generische `stateJson` von Anfang an klingt
+flexibel, wird aber zur Ablage für alles, was gerade eilig war, und ist danach nicht mehr
+abfragbar.
 
 **Fertig wenn:** `pnpm db:migrate` legt eine frische `idlekin.sqlite` an;
 erneutes Ausführen ist wirkungslos statt fehlerhaft.

@@ -3,12 +3,29 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.33.3",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "pnpm --parallel --filter @idlekin/server --filter @idlekin/client dev",
+    "dev:client": "pnpm --filter @idlekin/client dev",
+    "dev:server": "pnpm --filter @idlekin/server dev",
+    "dev:proto": "vite",
+    "build": "pnpm -r build",
+    "test": "vitest run",
+    "typecheck": "pnpm -r typecheck",
+    "db:migrate": "pnpm --filter @idlekin/server db:migrate",
+    "db:seed": "pnpm --filter @idlekin/server db:seed",
+    "content:validate": "pnpm --filter @idlekin/server content:validate",
+    "assets:platforms": "node tools/export-ase-reference.mjs \"assets/Plattform Referenz/Sprite-0001.ase\" \"assets/Plattform Referenz/Sprite-0001.png\" && node tools/build-reference-platform-tilesets.mjs",
+    "preview": "pnpm --filter @idlekin/client preview"
   },
   "devDependencies": {
-    "vite": "^8.2.2"
+    "@pixelation/aseprite": "^1.2.7",
+    "sharp": "^0.35.4",
+    "typescript": "^5.9.2",
+    "vite": "^8.2.2",
+    "vitest": "^3.2.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["better-sqlite3", "esbuild"]
   }
 }

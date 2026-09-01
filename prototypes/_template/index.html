@@ -27,9 +27,13 @@
       image-rendering: pixelated;
     }
     #hud { white-space: pre; color: #8a8; }
+    .prototype-home { align-self: flex-start; color: #eee; font-size: 20px; text-decoration: none; }
+    .prototype-home:hover { color: #9dce87; }
+    .prototype-home:focus-visible { outline: 2px solid #8a8; outline-offset: 4px; }
   </style>
 </head>
 <body>
+  <a class="prototype-home" href="/prototypes/" title="Zur Prototypen-Auswahl">Prototyp</a>
   <canvas id="game" width="480" height="270"></canvas>
   <div id="hud"></div>
   <script src="main.js"></script>

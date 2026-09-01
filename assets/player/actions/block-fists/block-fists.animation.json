@@ -1,0 +1,39 @@
+{
+  "id": "block-fists",
+  "sheet": "block-fists-body.png",
+  "status": "generated-candidate",
+  "cellWidth": 128,
+  "cellHeight": 128,
+  "columns": 10,
+  "rows": 4,
+  "anchorX": 64,
+  "baselineY": 79,
+  "facing": "right",
+  "layer": "body",
+  "animations": {
+    "block_start": {
+      "cells": [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+      "fps": 12,
+      "loop": false,
+      "next": "block_hold"
+    },
+    "block_hold": {
+      "cells": [[0, 1], [1, 1], [2, 1], [3, 1]],
+      "fps": 6,
+      "loop": true
+    },
+    "block_hit": {
+      "cells": [[0, 2], [1, 2], [2, 2], [3, 2]],
+      "fps": 14,
+      "loop": false,
+      "next": "block_hold",
+      "impactFrame": 2
+    },
+    "block_end": {
+      "cells": [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]],
+      "fps": 12,
+      "loop": false,
+      "next": "idle"
+    }
+  }
+}

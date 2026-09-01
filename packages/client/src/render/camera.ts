@@ -1,0 +1,1 @@
+export class Camera { x = 0; update(target: number, worldWidth: number, dt: number) { const desired = Math.max(0, Math.min(Math.max(0, worldWidth - 480), target - 240)); this.x += (desired - this.x) * (1 - Math.exp(-9 * dt)); } snap(target: number, worldWidth: number) { this.x = Math.max(0, Math.min(Math.max(0, worldWidth - 480), target - 240)); } }

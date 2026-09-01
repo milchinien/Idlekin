@@ -1,0 +1,32 @@
+{
+  "id": "area.wiese",
+  "name": "Bergwiese",
+  "size": { "width": 1680, "height": 270 },
+  "tileSize": 16,
+  "layers": [
+    { "kind": "background", "image": "/world/meadow-mountains/backgrounds/mountains-meadow-day.png", "parallax": 0.25 },
+    { "kind": "tiles", "image": "/world/meadow-mountains/tiles/platform-tileset-layered.png", "parallax": 1 }
+  ],
+  "collision": {
+    "solids": [
+      { "x": 0, "y": 230, "w": 500, "h": 40 },
+      { "x": 560, "y": 230, "w": 400, "h": 40 },
+      { "x": 1040, "y": 230, "w": 640, "h": 40 },
+      { "x": 680, "y": 198, "w": 64, "h": 32 },
+      { "x": 744, "y": 166, "w": 64, "h": 64 }
+    ],
+    "platforms": [
+      { "x": 260, "y": 175, "w": 128, "h": 6 },
+      { "x": 1110, "y": 180, "w": 96, "h": 6 }
+    ]
+  },
+  "spawns": [
+    { "id": "spawn.default", "x": 90, "y": 190 },
+    { "id": "spawn.vonDorf", "x": 90, "y": 190 }
+  ],
+  "portals": [
+    { "id": "portal.wiese.dorf", "targetArea": "area.dorf", "targetSpawn": "spawn.vonWiese", "position": { "x": 120, "y": 230 }, "requirement": null }
+  ],
+  "nodes": [],
+  "enemies": []
+}

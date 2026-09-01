@@ -102,12 +102,13 @@ M5 und M6 sind voneinander unabhängig und könnten getauscht werden. Empfohlen 
 | M13 | [13-m13-haertung-und-release.md](13-m13-haertung-und-release.md) | Balancing, Sicherheit, Performance, Steam-Vorbereitung | 10–14 T | 26–31 |
 
 **Aufwand in Personentagen für eine Person mit KI-Unterstützung**, ohne Assetproduktion
-außerhalb von M12 und ohne Wartezeiten. Summe: rund **95–125 Tage**. Die Zahlen sind
+außerhalb von M12 und ohne Wartezeiten. Summe: **93–121 Tage**. Die Zahlen sind
 Größenordnungen zur Reihenfolgeplanung, keine Zusagen.
 
-**Erster echt spielbarer Stand** ist Ende M6 (rund 35–45 Tage): mehrere Charaktere,
-parallele Aktivitäten, Kampf, Idle, Inventar. Das ist der sinnvolle Punkt für die erste
-Rückmeldung von außen.
+**Erster echt spielbarer Stand** ist Ende M6 (Tag 36–46): mehrere Charaktere, parallele
+Aktivitäten, Kampf, Idle, Inventar. Das ist der sinnvolle Punkt für die erste Rückmeldung
+von außen — siehe **O10** in
+[99-offene-entscheidungen.md](99-offene-entscheidungen.md).
 
 ---
 
@@ -117,7 +118,7 @@ Rückmeldung von außen.
 |---|---|
 | [90-datenmodell.md](90-datenmodell.md) | Verbindliche Typen und Tabellen, aus `docs/25` konkretisiert |
 | [91-teststrategie-und-qualitaet.md](91-teststrategie-und-qualitaet.md) | Was getestet wird, womit, und was bewusst nicht |
-| [92-asset-pipeline.md](92-asset-pipeline.md) | Weg vom Rohbild zum Atlas, aus `docs/27` abgeleitet |
+| [92-asset-pipeline.md](92-asset-pipeline.md) | Weg vom Rohbild zum Atlas, aus `docs/27` und `docs/28` abgeleitet |
 | [99-offene-entscheidungen.md](99-offene-entscheidungen.md) | Was noch entschieden werden muss, und bis wann |
 
 ---
@@ -129,9 +130,9 @@ Abnahmekriterien seiner Schritte erfüllt sind.
 
 | Meilenstein | Status | Beendet am | Bemerkung |
 |---|---|---|---|
-| M0 | offen | — | |
-| M1 | offen | — | |
-| M2 | offen | — | Vorarbeit in `prototypes/01-side-view-movement` |
+| M0 | fertig | 2026-09-01 | Workspace, TypeScript und Konventionen umgesetzt |
+| M1 | fertig | 2026-09-01 | Client, Server, SQLite, WebSocket und Content-Loader laufen |
+| M2 | fertig | 2026-09-01 | Zwei spielbare Gebiete mit Prototyp-Steuerung und Assets |
 | M3 | offen | — | |
 | M4 | offen | — | |
 | M5 | offen | — | |

@@ -68,12 +68,13 @@ Struktur nach `docs/12` §12.3 und ausdrücklich **nicht linear** (`docs/13` §1
 
 ```text
                     ┌── Wald ── Tiefer Wald ── Magischer Wald ──┐
-Dorf ── Wiese ──────┤                                           ├── Ruinen
-                    ├── Slime-Wiese ── Monster-Wiese ───────────┤
+Dorf ── Wiese ──────┼── Slime-Wiese ── Monster-Wiese ── Sumpf ──┼── Ruinen
                     └── Kupfermine ── Eisenmine ── Tiefenmine ──┘
                             │                          │
                        [Boss: Waldschrat]        [Boss: Steingolem]
 ```
+
+Zwölf normale Gebiete, zwei Bossgebiete, drei parallele Wege.
 
 **Umfang in M9: 12 Gebiete und 2 Bossgebiete.** Genug für mehrere Wege, wenig genug, um
 sie ordentlich zu bauen. Jedes Gebiet braucht nach `docs/13` §13.16 **mindestens einen

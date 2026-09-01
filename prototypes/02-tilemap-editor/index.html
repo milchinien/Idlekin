@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototyp 02 – Tilemap-Editor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <a class="prototype-home" href="/prototypes/" title="Zur Prototypen-Auswahl">
+        <h1>Tilemap-Editor</h1>
+        <span class="prototype-label">Prototyp 02</span>
+      </a>
+    </div>
+    <div class="top-actions">
+      <button id="play-map" class="play-button">▶ Spielen</button>
+      <span class="separator"></span>
+      <button id="undo" title="Rückgängig (Strg+Z)">↶ Rückgängig</button>
+      <button id="redo" title="Wiederholen (Strg+Y)">↷ Wiederholen</button>
+      <span class="separator"></span>
+      <button id="save">Speichern</button>
+      <button id="load">Meine Maps</button>
+      <button id="export">JSON exportieren</button>
+      <button id="import">JSON importieren</button>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="toolrail" aria-label="Werkzeuge">
+      <button class="tool active" data-tool="pencil" title="Malen (B)"><b>B</b><span>Malen</span></button>
+      <button class="tool" data-tool="eraser" title="Löschen (E)"><b>E</b><span>Löschen</span></button>
+      <button class="tool" data-tool="rectangle" title="Rechteck (R)"><b>R</b><span>Fläche</span></button>
+      <button class="tool" data-tool="picker" title="Aufnehmen (I)"><b>I</b><span>Picker</span></button>
+      <button class="tool" data-tool="collision" title="Kollision (C)"><b>C</b><span>Kollision</span></button>
+      <button class="tool" data-tool="pan" title="Verschieben (H oder Leertaste)"><b>H</b><span>Hand</span></button>
+    </aside>
+
+    <section class="editor-column">
+      <div class="stage-toolbar">
+        <label>Zoom
+          <select id="zoom">
+            <option value="0.5">50 %</option>
+            <option value="0.75">75 %</option>
+            <option value="1" selected>100 %</option>
+            <option value="1.5">150 %</option>
+            <option value="2">200 %</option>
+          </select>
+        </label>
+        <label><input id="show-grid" type="checkbox" checked> Raster</label>
+        <label><input id="show-collision" type="checkbox" checked> Kollisionen</label>
+        <button id="center-map">Ansicht zentrieren</button>
+        <span id="map-size-label"></span>
+      </div>
+      <div id="stage" class="stage">
+        <canvas id="map" width="960" height="544"></canvas>
+      </div>
+      <footer class="statusbar">
+        <span id="status-tool">Malen</span>
+        <span id="status-position">X 0 · Y 0</span>
+        <span id="status-selection">1×1 Tile</span>
+        <span id="save-state">Nicht gespeichert</span>
+      </footer>
+    </section>
+
+    <aside class="inspector">
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Ebenen</h2>
+          <span>oben = vorne</span>
+        </div>
+        <div id="layers" class="layer-list"></div>
+      </section>
+
+      <section class="panel settings-panel">
+        <div class="panel-heading"><h2>Map</h2></div>
+        <div class="form-grid">
+          <label>Breite <input id="map-cols" type="number" min="8" max="200" value="30"></label>
+          <label>Höhe <input id="map-rows" type="number" min="6" max="120" value="17"></label>
+        </div>
+        <label class="wide-label">Hintergrund
+          <select id="background"></select>
+        </label>
+        <div class="inline-actions">
+          <button id="resize-map">Größe übernehmen</button>
+          <button id="clear-map" class="danger">Map leeren</button>
+        </div>
+      </section>
+
+      <section class="panel palette-panel">
+        <div class="panel-heading">
+          <h2>Tiles & Objekte</h2>
+          <span>ziehen = Bereich wählen</span>
+        </div>
+        <select id="sheet" class="sheet-select"></select>
+        <div id="palette-scroll" class="palette-scroll">
+          <canvas id="palette"></canvas>
+        </div>
+        <div class="selection-readout">
+          <canvas id="selection-preview" width="128" height="96"></canvas>
+          <div>
+            <strong id="selection-name">Tileset</strong>
+            <span id="selection-coords">Spalte 0 · Zeile 0</span>
+            <span id="selection-size">32×32 px</span>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <dialog id="maps-dialog" class="maps-dialog">
+    <div class="dialog-heading">
+      <div>
+        <span class="eyebrow">Lokale Bibliothek</span>
+        <h2>Meine Maps</h2>
+      </div>
+      <button id="close-maps" class="icon-button" aria-label="Menü schließen">×</button>
+    </div>
+    <form id="new-map-form" class="save-map-form">
+      <label for="map-name">Aktuelle Map unter neuem Namen speichern</label>
+      <div>
+        <input id="map-name" maxlength="60" autocomplete="off" placeholder="z. B. Waldlichtung">
+        <button type="submit" class="primary">Neue Map speichern</button>
+      </div>
+    </form>
+    <div class="library-heading">
+      <strong>Gespeicherte Maps</strong>
+      <span id="map-count">0 Maps</span>
+    </div>
+    <div id="saved-maps" class="saved-maps"></div>
+  </dialog>
+
+  <div id="toast" role="status"></div>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -43,7 +43,10 @@ entscheidet, was zwischen Charakteren geteilt wird:
 Verwaltungsaufwand ohne Spielwert, und `docs/25` §25.2 führt Währung ausdrücklich unter
 `Player`.
 
-**Herausforderungs- und Questfortschritt sind spielerbezogen** nach `docs/16` §16.6.
+**Questfortschritt ist spielerbezogen** nach `docs/16` §16.6 (ausdrücklich
+charakterübergreifend). **Herausforderungsfortschritt ebenso**, abgeleitet aus `docs/25`
+§25.2: freigeschaltete Gebiete stehen dort unter `Player`, also muss auch der Zähler
+dorthin, der sie freischaltet.
 
 ---
 
@@ -166,14 +169,21 @@ Index auf `(areaId, ownerId)`. **Kein automatisches Löschen** (`docs/09` §9.16
 ```ts
 type Activity =
   | { type: 'none' }
-  | { type: 'gather';   nodeId: NodeId;  startedAt: number; lastYieldAt: number; remainderMs: number }
-  | { type: 'combat';   areaId: AreaId;  startedAt: number; lastYieldAt: number; remainderMs: number }
-  | { type: 'crafting'; recipeId: RecipeId; queued: number; startedAt: number; remainderMs: number };
+  | { type: 'gather';   nodeId: NodeId;     startedAt: number; lastYieldAt: number }
+  | { type: 'combat';   areaId: AreaId;     startedAt: number; lastYieldAt: number }
+  | { type: 'crafting'; recipeId: RecipeId; startedAt: number; lastYieldAt: number; queued: number };
 ```
 
-**`remainderMs` ist der wichtigste Wert im gesamten Modell.** Er trägt den nicht
-abgerechneten Teilzyklus zwischen zwei Abrechnungen. Fehlt er, verliert der Spieler bei
-jeder Abrechnung Bruchteile — bei 30-Sekunden-Takt und 3-Sekunden-Zyklus bis zu 10 %.
+**`lastYieldAt` ist der wichtigste Wert im gesamten Modell.** Es ist der Zeitpunkt, **bis
+zu dem tatsächlich ausgezahlt wurde** — nicht der Zeitpunkt der letzten Abrechnung.
+
+Der Unterschied ist der ganze Punkt: Beim Abrechnen wird der Marker um
+`n * zykluszeit / effizienz` vorgerückt, nicht auf `jetzt`. Die verbleibende Differenz
+ist der angefangene Zyklus und geht dadurch nicht verloren. Wird stattdessen auf `jetzt`
+gesetzt, verliert der Spieler bei jeder Abrechnung Bruchteile — bei 30-Sekunden-Takt und
+3-Sekunden-Zyklus bis zu 10 %.
+
+Ein zusätzliches Restfeld wäre redundant und würde irgendwann vom Marker abweichen.
 Ausführlich in M5/S-5.4.
 
 ### Modifier
@@ -233,5 +243,5 @@ Alle werden beim Serverstart geladen, validiert und auf Querverweise geprüft (M
 | Bank / gemeinsames Lager | In `docs/` nicht vorgesehen. Rucksackgrenze und Bodenablage sind ein bewusstes Designelement (`docs/03` §3.13). Siehe [99-offene-entscheidungen.md](99-offene-entscheidungen.md). |
 | Gilden, Gruppen, Chat | `docs/18` §18.3, §18.9 schließen sie aus |
 | PvP | `docs/18` §18.9 |
-| Haltbarkeit von Ausrüstung | `docs/19` §19.19 schließt Verlust aus |
+| Haltbarkeit von Ausrüstung | `docs/06` §6.15: keine Gegenstände werden zerstört |
 | Gewicht statt Plätze | `docs/22` §22.6 zählt Plätze |

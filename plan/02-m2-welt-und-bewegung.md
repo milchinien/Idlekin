@@ -191,9 +191,11 @@ werden weich korrigiert.
 5. Liegt die Abweichung unter 2 px, wird **nicht** zurückgesetzt, sondern über 200 ms
    angeglichen. Sonst zuckt die Figur bei jedem Paket.
 
-**Eingabebelegung** nach `docs/06` §6.4: A/D oder Pfeiltasten laufen, Leertaste springt,
-S fällt durch Einweg-Plattformen. Maustasten sind ab M6 für Angriffe reserviert und
-werden hier noch nicht belegt.
+**Eingabebelegung:** A/D oder Pfeiltasten laufen, Leertaste springt, `S` fällt durch
+Einweg-Plattformen — Letzteres aus `prototypes/01-side-view-movement`. `docs/06` §6.4
+legt nur fest, dass Bewegung über die normale Bewegungssteuerung und Fähigkeiten über
+Tasten laufen; die konkreten Tasten sind Auslegung. Maustasten sind ab M6 für Angriffe
+reserviert und werden hier noch nicht belegt.
 
 **Fertig wenn:** Bei 150 ms künstlicher Verzögerung fühlt sich Bewegung unverändert an,
 und bei absichtlich manipulierter Clientposition zieht der Server die Figur binnen eines

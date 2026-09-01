@@ -1,0 +1,21 @@
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import websocket from '@fastify/websocket';
+import { systemClock } from '@idlekin/shared';
+import { loadContent } from './content/load.js';
+import { registerHttp } from './net/http.js';
+import { registerSocket } from './net/socket.js';
+import { createTickLoop } from './world/tick.js';
+import { playerService } from './systems/playerService.js';
+
+const content = loadContent();
+const app = Fastify({ logger: true });
+await app.register(cors, { origin: true });
+await app.register(websocket);
+registerHttp(app); registerSocket(app, content);
+const stopTick = createTickLoop(systemClock, () => undefined);
+const saveTimer = setInterval(() => playerService.saveAll(), 30_000);
+const shutdown = async () => { clearInterval(saveTimer); stopTick(); playerService.saveAll(); await app.close(); process.exit(0); };
+process.on('SIGINT', shutdown); process.on('SIGTERM', shutdown);
+await app.listen({ port: Number(process.env.IDLEKIN_PORT ?? 3000), host: '127.0.0.1' });
+app.log.info(`${content.areas.size} Gebiete geladen`);
