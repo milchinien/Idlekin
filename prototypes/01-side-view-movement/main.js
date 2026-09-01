@@ -19,6 +19,9 @@ const sectionCanvas = document.createElement('canvas');
 let payload = null;
 let world = null;
 let npcs = [];
+let enemyTypes = [];
+let monsterSpawns = [];
+const enemyImages = new Map();
 let currentSection = null;
 let currentCollisions = new Set();
 let playerAtlas = null;
@@ -135,7 +138,7 @@ function renderQuestTracker() {
 }
 
 function updateFeatureList() {
-  const features = [['Karte', Boolean(currentSection)], ['Kollision', Boolean(currentSection?.mapState.collision?.length)], ['Portale', Boolean(world?.portals?.length)], ['NPCs', Boolean(npcs.length)], ['Dialoge', npcs.some(npc => npc.dialogue?.length)], ['Quests', npcs.some(npc => npc.quests?.length)]]; const root = document.querySelector('#feature-list'); root.replaceChildren();
+  const features = [['Karte', Boolean(currentSection)], ['Kollision', Boolean(currentSection?.mapState.collision?.length)], ['Portale', Boolean(world?.portals?.length)], ['NPCs', Boolean(npcs.length)], ['Monster', Boolean(monsterSpawns.length)], ['Dialoge', npcs.some(npc => npc.dialogue?.length)], ['Quests', npcs.some(npc => npc.quests?.length)]]; const root = document.querySelector('#feature-list'); root.replaceChildren();
   for (const [label, available] of features) { const item = document.createElement('div'); item.className = `feature${available ? '' : ' missing'}`; item.textContent = label; root.append(item); } document.querySelector('#collision-status').textContent = `Kollisionen: ${currentSection?.mapState.collision?.length || 0}`;
 }
 
@@ -147,6 +150,7 @@ function drawPlayer(cameraX, cameraY) {
 function draw() {
   if (!currentSection) return; const cameraX = Math.max(0, Math.min(mapWidth() - canvas.width, player.x + PLAYER_W / 2 - canvas.width / 2)), cameraY = Math.max(0, Math.min(mapHeight() - canvas.height, player.y + PLAYER_H / 2 - canvas.height / 2)); context.clearRect(0, 0, canvas.width, canvas.height); context.drawImage(sectionCanvas, cameraX, cameraY, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
   for (const portal of (world.portals || []).filter(entry => entry.sectionId === currentSection.id)) { context.save(); context.shadowColor = '#58d5bf'; context.shadowBlur = 12; context.strokeStyle = '#70ead5'; context.lineWidth = 4; context.beginPath(); context.ellipse(portal.x - cameraX, portal.y - cameraY - 35, 25, 38, 0, 0, Math.PI * 2); context.stroke(); context.restore(); }
+  for (const spawn of monsterSpawns.filter(entry => entry.sectionId === currentSection.id)) { const enemy = enemyTypes.find(entry => entry.id === spawn.enemyId), image = enemyImages.get(enemy?.id); if (!enemy || !image) continue; const amount = spawn.kind === 'zone' ? Math.min(3, spawn.max || 1) : 1; for (let i = 0; i < amount; i++) { const offset = spawn.kind === 'zone' ? (i - 1) * Math.min(55, (spawn.radius || 96) / 3) : 0, x = spawn.x + offset - cameraX, y = spawn.y - cameraY, frame = enemy.frame || image.height; context.drawImage(image, 0, 0, frame, image.height, Math.round(x - 36), Math.round(y - 68), 72, 72); context.fillStyle = enemy.type === 'Boss' ? '#e9b95f' : '#8fcf72'; context.fillRect(Math.round(x - 28), Math.round(y - 76), 56, 4); context.font = "12px 'Idlekin'"; context.textAlign = 'center'; context.fillStyle = '#eef4e9'; context.fillText(enemy.name, Math.round(x), Math.round(y - 82)); } }
   if (npcAtlas) for (const npc of npcs.filter(entry => entry.sectionId === currentSection.id)) { const sprite = npc.sprite || {}, x = npc.x - cameraX, y = npc.y - cameraY; context.drawImage(npcAtlas, (sprite.col || 0) * 64, (sprite.row || 0) * 64, 64, 64, Math.round(x - 32), Math.round(y - 64), 64, 64); const quest = nextQuestForNpc(npc), marker = quest ? (stateFor(npc, quest).accepted ? '?' : '!') : '✓'; context.font = "22px 'Idlekin'"; context.textAlign = 'center'; context.fillStyle = marker === '✓' ? '#82cf80' : '#ffe174'; context.fillText(marker, x, y - 67); } context.textAlign = 'left'; drawPlayer(cameraX, cameraY);
 }
 function loop(now) { accumulator += Math.min(.1, (now - lastTime) / 1000); lastTime = now; while (accumulator >= STEP) { update(STEP); accumulator -= STEP; } draw(); requestAnimationFrame(loop); }
@@ -155,8 +159,10 @@ function resetTest() { progress.clear(); activeQuestRef = null; const spawn = wo
 
 async function init() {
   const data = normalise(readPayload()); document.querySelector('#empty-state').hidden = Boolean(data); if (!data) { updateFeatureList(); return; }
+  enemyTypes = clone(data.payload.project?.enemies || []); monsterSpawns = clone(data.payload.project?.spawns || []);
   payload = data.payload; world = data.world; npcs = data.npcs; document.querySelector('#source-name').textContent = payload.label || `Prototyp ${payload.source}`; document.querySelector('#world-name').textContent = world.name || 'Testwelt'; const back = document.querySelector('#back-to-editor'); back.href = payload.returnUrl || '/prototypes/'; back.textContent = `Zurück zu Prototyp ${payload.source || ''}`;
-  [playerAtlas, npcAtlas] = await Promise.all([imageFrom('../../assets/player/Final Player/toUse.png').catch(() => null), imageFrom('../../assets/npc/Generic Male NPCs.png').catch(() => null)]); resetTest(); renderQuestTracker();
+  [playerAtlas, npcAtlas] = await Promise.all([imageFrom('../../assets/player/Final Player/toUse.png').catch(() => null), imageFrom('../../assets/npc/Generic Male NPCs.png').catch(() => null)]);
+  await Promise.all(enemyTypes.map(async enemy => { try { enemyImages.set(enemy.id, await imageFrom(`../../assets/enemy/Monsters%20Creatures%20Fantasy%202/${enemy.sprite}`)); } catch {} })); resetTest(); renderQuestTracker();
   document.querySelector('#restart').addEventListener('click', resetTest);
   window.addEventListener('keydown', event => { if (document.querySelector('#npc-dialog').open) return; keys.add(event.code); if (['Space','ArrowUp','ArrowDown'].includes(event.code)) event.preventDefault(); if ((event.code === 'Space' || event.code === 'KeyW' || event.code === 'ArrowUp') && player.grounded) { player.vy = -JUMP; player.grounded = false; } if (event.code === 'KeyE') interact(); if (event.code === 'KeyR') resetTest(); });
   window.addEventListener('keyup', event => keys.delete(event.code)); requestAnimationFrame(loop);
